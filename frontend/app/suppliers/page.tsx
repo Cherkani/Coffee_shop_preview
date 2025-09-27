@@ -1,0 +1,204 @@
+"use client"
+
+import { useState } from "react"
+import { useAppStore } from "@/lib/store"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Input } from "@/components/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Plus, Search, Star, Phone, Mail, MapPin, Package } from "lucide-react"
+import type { Supplier } from "@/lib/types"
+
+// Mock suppliers data
+const mockSuppliers: Supplier[] = [
+  {
+    id: "1",
+    name: "Premium Coffee Co.",
+    contactEmail: "orders@premiumcoffee.com",
+    contactPhone: "+1 (555) 123-4567",
+    address: "123 Coffee Street, Seattle, WA 98101",
+    categories: ["Coffee Beans", "Tea", "Equipment"],
+    rating: 4.8,
+    isActive: true,
+    paymentTerms: "Net 30",
+    deliveryTime: "2-3 business days",
+  },
+  {
+    id: "2",
+    name: "Dairy Fresh Supply",
+    contactEmail: "supply@dairyfresh.com",
+    contactPhone: "+1 (555) 234-5678",
+    address: "456 Dairy Lane, Portland, OR 97201",
+    categories: ["Dairy", "Alternative Milk"],
+    rating: 4.6,
+    isActive: true,
+    paymentTerms: "Net 15",
+    deliveryTime: "1-2 business days",
+  },
+  {
+    id: "3",
+    name: "Local Bakery Wholesale",
+    contactEmail: "wholesale@localbakery.com",
+    contactPhone: "+1 (555) 345-6789",
+    address: "789 Bakery Ave, San Francisco, CA 94102",
+    categories: ["Pastries", "Bread", "Desserts"],
+    rating: 4.9,
+    isActive: true,
+    paymentTerms: "Net 7",
+    deliveryTime: "Same day",
+  },
+  {
+    id: "4",
+    name: "Supply Pro Equipment",
+    contactEmail: "sales@supplypro.com",
+    contactPhone: "+1 (555) 456-7890",
+    address: "321 Supply Road, Los Angeles, CA 90210",
+    categories: ["Cups", "Lids", "Napkins", "Equipment"],
+    rating: 4.4,
+    isActive: false,
+    paymentTerms: "Net 30",
+    deliveryTime: "3-5 business days",
+  },
+]
+
+export default function SuppliersPage() {
+  const { currentUser } = useAppStore()
+  const [suppliers, setSuppliers] = useState<Supplier[]>(mockSuppliers)
+  const [searchTerm, setSearchTerm] = useState("")
+  const [categoryFilter, setCategoryFilter] = useState("all")
+
+  // Access control
+  if (!currentUser || currentUser.role !== "owner") {
+    return (
+      <div className="p-6">
+        <Card>
+          <CardContent className="pt-6">
+            <p className="text-center text-muted-foreground">Access denied. Only owners can manage suppliers.</p>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
+  const filteredSuppliers = suppliers.filter((supplier) => {
+    const matchesSearch =
+      supplier.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      supplier.categories.some((cat) => cat.toLowerCase().includes(searchTerm.toLowerCase()))
+    const matchesCategory = categoryFilter === "all" || supplier.categories.includes(categoryFilter)
+    return matchesSearch && matchesCategory
+  })
+
+  const allCategories = Array.from(new Set(suppliers.flatMap((s) => s.categories)))
+
+  return (
+    <div className="p-6 space-y-6">
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold">Suppliers</h1>
+          <p className="text-muted-foreground">Manage your supply chain partners</p>
+        </div>
+        <Button>
+          <Plus className="h-4 w-4 mr-2" />
+          Add Supplier
+        </Button>
+      </div>
+
+      <div className="flex gap-4">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search suppliers..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10"
+          />
+        </div>
+        <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+          <SelectTrigger className="w-48">
+            <SelectValue placeholder="Filter by category" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Categories</SelectItem>
+            {allCategories.map((category) => (
+              <SelectItem key={category} value={category}>
+                {category}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {filteredSuppliers.map((supplier) => (
+          <Card key={supplier.id} className={supplier.isActive ? "" : "opacity-60"}>
+            <CardHeader>
+              <div className="flex justify-between items-start">
+                <div>
+                  <CardTitle className="text-lg">{supplier.name}</CardTitle>
+                  <div className="flex items-center gap-1 mt-1">
+                    <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                    <span className="text-sm font-medium">{supplier.rating}</span>
+                  </div>
+                </div>
+                <Badge variant={supplier.isActive ? "default" : "secondary"}>
+                  {supplier.isActive ? "Active" : "Inactive"}
+                </Badge>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Mail className="h-4 w-4" />
+                  {supplier.contactEmail}
+                </div>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Phone className="h-4 w-4" />
+                  {supplier.contactPhone}
+                </div>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <MapPin className="h-4 w-4" />
+                  {supplier.address}
+                </div>
+              </div>
+
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <Package className="h-4 w-4" />
+                  <span className="text-sm font-medium">Categories</span>
+                </div>
+                <div className="flex flex-wrap gap-1">
+                  {supplier.categories.map((category) => (
+                    <Badge key={category} variant="outline" className="text-xs">
+                      {category}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <span className="text-muted-foreground">Payment Terms:</span>
+                  <p className="font-medium">{supplier.paymentTerms}</p>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">Delivery:</span>
+                  <p className="font-medium">{supplier.deliveryTime}</p>
+                </div>
+              </div>
+
+              <div className="flex gap-2">
+                <Button variant="outline" size="sm" className="flex-1 bg-transparent">
+                  Edit
+                </Button>
+                <Button size="sm" className="flex-1">
+                  Create Order
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </div>
+  )
+}
