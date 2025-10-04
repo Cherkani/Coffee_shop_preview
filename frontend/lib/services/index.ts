@@ -24,3 +24,6 @@ export * from "./marketplace-service"
 
 // Login Service
 export * from "./login-service"
+export * from "./sales-service"
+export * from "./mock-data-persistence"
+export * from "./api-service"

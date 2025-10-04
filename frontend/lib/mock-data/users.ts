@@ -1,113 +1,20 @@
 import type { User } from "../types"
+import { ApiService } from "../services/api-service"
 
-export const mockUsers: User[] = [
-  // Super Admin
-  {
-    id: "1",
-    name: "Super Admin",
-    email: "super@coffeeshop.com",
-    role: "superuser",
-    isActive: true,
-    createdAt: new Date("2023-01-01"),
-  },
+// Fetch users from JSON server
+export const getMockUsers = async (): Promise<User[]> => {
+  try {
+    const users = await ApiService.getUsers()
+    return users.map(user => ({
+      ...user,
+      createdAt: new Date(user.createdAt)
+    }))
+  } catch (error) {
+    console.error("Failed to fetch users from API:", error)
+    // Fallback to empty array if API fails
+    return []
+  }
+}
 
-  // Brew & Bean Coffee Co. (Org 1)
-  {
-    id: "2",
-    name: "John Owner",
-    email: "john@brewbean.com",
-    role: "owner",
-    organizationId: "1",
-    isActive: true,
-    createdAt: new Date("2023-01-15"),
-  },
-  {
-    id: "3",
-    name: "Admin Brew Bean",
-    email: "admin@brewbean.com",
-    role: "admin",
-    organizationId: "1",
-    isActive: true,
-    createdAt: new Date("2023-01-20"),
-  },
-  {
-    id: "4",
-    name: "Mike Cashier",
-    email: "mike@brewbean.com",
-    role: "cashier",
-    organizationId: "1",
-    locationId: "1",
-    isActive: true,
-    createdAt: new Date("2023-02-15"),
-  },
-  {
-    id: "5",
-    name: "Lisa Cashier",
-    email: "lisa@brewbean.com",
-    role: "cashier",
-    organizationId: "1",
-    locationId: "1",
-    isActive: true,
-    createdAt: new Date("2023-03-01"),
-  },
-  {
-    id: "6",
-    name: "David Barista",
-    email: "david@brewbean.com",
-    role: "cashier",
-    organizationId: "1",
-    locationId: "2",
-    isActive: true,
-    createdAt: new Date("2023-03-15"),
-  },
-
-  // Morning Grind Coffee (Org 2)
-  {
-    id: "7",
-    name: "Emma Wilson",
-    email: "emma@morninggrind.com",
-    role: "owner",
-    organizationId: "2",
-    isActive: true,
-    createdAt: new Date("2023-03-20"),
-  },
-  {
-    id: "8",
-    name: "Admin Morning Grind",
-    email: "admin@morninggrind.com",
-    role: "admin",
-    organizationId: "2",
-    isActive: true,
-    createdAt: new Date("2023-03-25"),
-  },
-  {
-    id: "9",
-    name: "Chris Cashier",
-    email: "chris@morninggrind.com",
-    role: "cashier",
-    organizationId: "2",
-    locationId: "3",
-    isActive: true,
-    createdAt: new Date("2023-04-01"),
-  },
-  {
-    id: "10",
-    name: "Sarah Cashier",
-    email: "sarah@morninggrind.com",
-    role: "cashier",
-    organizationId: "2",
-    locationId: "3",
-    isActive: true,
-    createdAt: new Date("2023-04-15"),
-  },
-  {
-    id: "11",
-    name: "Alex Cashier",
-    email: "alex@morninggrind.com",
-    role: "cashier",
-    organizationId: "2",
-    locationId: "4",
-    isActive: true,
-    createdAt: new Date("2023-05-01"),
-  },
-]
+// For backward compatibility, export a function that returns the data
+export const mockUsers = getMockUsers

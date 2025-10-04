@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useAppStore } from "@/lib/store"
 import { getOrders } from "@/lib/services"
 import type { Product, OrderItem, Order } from "@/lib/types"
@@ -13,11 +13,30 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 export default function POSPage() {
   const { currentUser, currentLocation } = useAppStore()
   
-  // Get orders using service function
-  const orders = getOrders(currentUser)
+  const [orders, setOrders] = useState<Order[]>([])
+  const [loading, setLoading] = useState(true)
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
   const [cartItems, setCartItems] = useState<OrderItem[]>([])
   const [isModifierDrawerOpen, setIsModifierDrawerOpen] = useState(false)
+
+  useEffect(() => {
+    const loadOrders = async () => {
+      if (!currentUser) return
+
+      try {
+        setLoading(true)
+        const ordersData = await getOrders(currentUser)
+        setOrders(ordersData)
+      } catch (error) {
+        console.error("Failed to load orders:", error)
+        setOrders([])
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadOrders()
+  }, [currentUser])
 
   // Mock function for demo purposes
   const updateOrderStatus = (orderId: string, status: Order["status"]) => {
@@ -84,6 +103,28 @@ export default function POSPage() {
 
   // Filter orders for current location
   const locationOrders = orders.filter((order) => order.locationId === currentLocation?.id)
+
+  if (loading) {
+    return (
+      <div className="flex h-full">
+        <div className="flex-1 p-6">
+          <div className="mb-6">
+            <h1 className="text-2xl font-semibold">Point of Sale</h1>
+            <p className="text-muted-foreground">Loading products and orders...</p>
+          </div>
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="border rounded-lg p-4 animate-pulse">
+                <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                <div className="h-3 bg-gray-200 rounded w-1/2 mb-2"></div>
+                <div className="h-3 bg-gray-200 rounded w-full"></div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="flex h-full">

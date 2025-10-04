@@ -1,32 +1,20 @@
 import type { Organization } from "../types"
+import { ApiService } from "../services/api-service"
 
-export const mockOrganizations: Organization[] = [
-  {
-    id: "1",
-    name: "Brew & Bean Coffee Co.",
-    ownerId: "2",
-    adminId: "3",
-    subscriptionPlan: "pro",
-    status: "active",
-    createdAt: new Date("2023-01-15"),
-    monthlyRevenue: 15750,
-    locations: [
-      { id: "1", name: "Downtown Location", address: "123 Main St, Downtown", organizationId: "1" },
-      { id: "2", name: "Mall Location", address: "456 Shopping Center, Westside Mall", organizationId: "1" },
-    ],
-  },
-  {
-    id: "2",
-    name: "Morning Grind Coffee",
-    ownerId: "7",
-    adminId: "8",
-    subscriptionPlan: "basic",
-    status: "active",
-    createdAt: new Date("2023-03-20"),
-    monthlyRevenue: 8500,
-    locations: [
-      { id: "3", name: "Main Street", address: "789 Main St, City Center", organizationId: "2" },
-      { id: "4", name: "Riverside", address: "456 River Ave, Riverside District", organizationId: "2" },
-    ],
-  },
-]
+// Fetch organizations from JSON server
+export const getMockOrganizations = async (): Promise<Organization[]> => {
+  try {
+    const organizations = await ApiService.getOrganizations()
+    return organizations.map(org => ({
+      ...org,
+      createdAt: new Date(org.createdAt)
+    }))
+  } catch (error) {
+    console.error("Failed to fetch organizations from API:", error)
+    // Fallback to empty array if API fails
+    return []
+  }
+}
+
+// For backward compatibility, export a function that returns the data
+export const mockOrganizations = getMockOrganizations

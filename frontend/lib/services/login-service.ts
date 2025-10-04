@@ -6,24 +6,27 @@ import { mockUsers } from "../mock-data"
  * Handles login screen data operations
  */
 
-export function getAllUsers(): User[] {
-  return mockUsers
+export async function getAllUsers(): Promise<User[]> {
+  return await mockUsers()
 }
 
-export function getSuperUser(): User | undefined {
-  return mockUsers.find(user => user.role === "superuser")
+export async function getSuperUser(): Promise<User | undefined> {
+  const users = await mockUsers()
+  return users.find(user => user.role === "superuser")
 }
 
-export function getUsersByOrganization(organizationId: string): User[] {
-  return mockUsers.filter(user => user.organizationId === organizationId)
+export async function getUsersByOrganization(organizationId: string): Promise<User[]> {
+  const users = await mockUsers()
+  return users.filter(user => user.organizationId === organizationId)
 }
 
-export function getOrganizationUsers(): User[] {
-  return mockUsers.filter(user => user.organizationId)
+export async function getOrganizationUsers(): Promise<User[]> {
+  const users = await mockUsers()
+  return users.filter(user => user.organizationId)
 }
 
-export function getUsersGroupedByOrganization(): Record<string, User[]> {
-  const organizationUsers = getOrganizationUsers()
+export async function getUsersGroupedByOrganization(): Promise<Record<string, User[]>> {
+  const organizationUsers = await getOrganizationUsers()
   
   return organizationUsers.reduce((acc, user) => {
     const orgId = user.organizationId!

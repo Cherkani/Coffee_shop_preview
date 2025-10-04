@@ -2,9 +2,23 @@ import type { User, UserRole, NavigationPermission, OrganizationNavigationSettin
 
 // Available navigation items that can be controlled by admin
 export const AVAILABLE_NAVIGATION_ITEMS = {
+  admin: [
+    { name: "Dashboard", href: "/dashboard", icon: "LayoutDashboard" },
+    { name: "Product Management", href: "/product-management", icon: "Package" },
+    { name: "Staff Management", href: "/staff", icon: "Users" },
+    { name: "Navigation Settings", href: "/navigation-settings", icon: "Settings" },
+    { name: "Inventory", href: "/inventory", icon: "Package" },
+    { name: "Reports", href: "/reports", icon: "BarChart3" },
+    { name: "Transactions", href: "/transactions", icon: "Receipt" },
+    { name: "KDS", href: "/kds", icon: "Monitor" },
+    { name: "Time Clock", href: "/timeclock", icon: "Clock" },
+  ],
   owner: [
     { name: "Dashboard", href: "/dashboard", icon: "LayoutDashboard" },
     { name: "Locations", href: "/locations", icon: "MapPin" },
+    { name: "Product Management", href: "/product-management", icon: "Package" },
+    { name: "POS", href: "/pos", icon: "ShoppingCart" },
+    { name: "Cashier Sales", href: "/cashier-sales", icon: "TrendingUp" },
     { name: "Reports", href: "/reports", icon: "BarChart3" },
     { name: "Analytics", href: "/analytics", icon: "TrendingUp" },
     { name: "Catalog", href: "/catalog", icon: "Package" },
@@ -30,6 +44,17 @@ export function getDefaultNavigationSettings(organizationId: string): Organizati
   return {
     id: `nav-settings-${organizationId}`,
     organizationId,
+    adminPermissions: AVAILABLE_NAVIGATION_ITEMS.admin.map((item, index) => ({
+      id: `admin-${item.href}-${organizationId}`,
+      name: item.name,
+      href: item.href,
+      icon: item.icon,
+      enabled: true, // Default to enabled
+      role: "admin" as UserRole,
+      organizationId,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    })),
     ownerPermissions: AVAILABLE_NAVIGATION_ITEMS.owner.map((item, index) => ({
       id: `owner-${item.href}-${organizationId}`,
       name: item.name,
@@ -66,6 +91,16 @@ export function getNavigationItemsForRole(
     return []
   }
 
+  if (user.role === "admin") {
+    return navigationSettings.adminPermissions
+      .filter(permission => permission.enabled)
+      .map(permission => ({
+        name: permission.name,
+        href: permission.href,
+        icon: permission.icon,
+      }))
+  }
+
   if (user.role === "owner") {
     return navigationSettings.ownerPermissions
       .filter(permission => permission.enabled)
@@ -94,9 +129,9 @@ export function getNavigationItemsForRole(
 export function canManageNavigation(user: User | null, targetRole: UserRole): boolean {
   if (!user) return false
   
-  // Only admin can manage navigation for owner and cashier in their organization
+  // Only admin can manage navigation for admin, owner and cashier in their organization
   if (user.role === "admin") {
-    return (targetRole === "owner" || targetRole === "cashier") && user.organizationId
+    return (targetRole === "admin" || targetRole === "owner" || targetRole === "cashier") && !!user.organizationId
   }
   
   // Superuser can manage all

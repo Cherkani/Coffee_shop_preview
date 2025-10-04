@@ -3,6 +3,7 @@
 import type React from "react"
 
 import { useAppStore } from "@/lib/store"
+import { useStoreInitialization } from "@/lib/hooks/use-store-initialization"
 import { LoginScreen } from "./login-screen"
 import { Header } from "@/components/layout/header"
 import { Sidebar } from "@/components/layout/sidebar"
@@ -10,6 +11,9 @@ import { ThemeProvider } from "@/lib/themes/theme-provider"
 
 export function AuthWrapper({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, currentUser } = useAppStore()
+  
+  // Initialize store data on app startup
+  useStoreInitialization()
 
   if (!isAuthenticated) {
     return <LoginScreen />

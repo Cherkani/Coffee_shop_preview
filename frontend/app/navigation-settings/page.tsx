@@ -98,6 +98,47 @@ export default function NavigationSettingsPage() {
       </div>
 
       <div className="grid gap-6">
+        {/* Admin Permissions */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Settings className="h-5 w-5" />
+              Admin Permissions
+            </CardTitle>
+            <CardDescription>
+              Control what navigation items admins can see in their sidebar.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {navigationSettings?.adminPermissions.map((permission) => {
+              const IconComponent = iconMap[permission.icon as keyof typeof iconMap] || Settings
+              return (
+                <div key={permission.id} className="flex items-center justify-between p-4 border rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <IconComponent className="h-5 w-5 text-muted-foreground" />
+                    <div>
+                      <Label htmlFor={permission.id} className="text-sm font-medium">
+                        {permission.name}
+                      </Label>
+                      <p className="text-xs text-muted-foreground">{permission.href}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge variant={permission.enabled ? "default" : "secondary"}>
+                      {permission.enabled ? "Enabled" : "Disabled"}
+                    </Badge>
+                    <Switch
+                      id={permission.id}
+                      checked={permission.enabled}
+                      onCheckedChange={(enabled) => updateNavigationPermission(permission.id, enabled)}
+                    />
+                  </div>
+                </div>
+              )
+            })}
+          </CardContent>
+        </Card>
+
         {/* Owner Permissions */}
         <Card>
           <CardHeader>

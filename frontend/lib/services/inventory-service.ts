@@ -1,48 +1,57 @@
 import type { InventoryItem, User } from "../types"
 import { mockInventoryItems } from "../mock-data"
 import { filterInventoryByTenant } from "../multi-tenant-filtering"
+import ApiService from "./api-service"
 
 /**
  * Inventory Service
  * Handles all inventory-related data operations with multi-tenant filtering
  */
 
-export function getInventoryItems(user: User | null, selectedLocations?: string[]): InventoryItem[] {
-  return filterInventoryByTenant(mockInventoryItems, user, selectedLocations)
+export async function getInventoryItems(user: User | null, selectedLocations?: string[]): Promise<InventoryItem[]> {
+  try {
+    // Try to get inventory from API first
+    const inventory = await ApiService.getInventory()
+    return filterInventoryByTenant(inventory, user, selectedLocations)
+  } catch (error) {
+    console.log("API failed, falling back to mock data:", error)
+    const inventory = await mockInventoryItems()
+    return filterInventoryByTenant(inventory, user, selectedLocations)
+  }
 }
 
-export function getInventoryItemById(itemId: string, user: User | null): InventoryItem | undefined {
-  const items = getInventoryItems(user)
+export async function getInventoryItemById(itemId: string, user: User | null): Promise<InventoryItem | undefined> {
+  const items = await getInventoryItems(user)
   return items.find(item => item.id === itemId)
 }
 
-export function getInventoryItemsByCategory(category: string, user: User | null): InventoryItem[] {
-  const items = getInventoryItems(user)
+export async function getInventoryItemsByCategory(category: string, user: User | null): Promise<InventoryItem[]> {
+  const items = await getInventoryItems(user)
   return items.filter(item => item.category === category)
 }
 
-export function getInventoryItemsByLocation(locationId: string, user: User | null): InventoryItem[] {
-  const items = getInventoryItems(user)
+export async function getInventoryItemsByLocation(locationId: string, user: User | null): Promise<InventoryItem[]> {
+  const items = await getInventoryItems(user)
   return items.filter(item => item.locationId === locationId)
 }
 
-export function getLowStockItems(user: User | null): InventoryItem[] {
-  const items = getInventoryItems(user)
+export async function getLowStockItems(user: User | null): Promise<InventoryItem[]> {
+  const items = await getInventoryItems(user)
   return items.filter(item => item.currentStock <= item.minStock)
 }
 
-export function getOutOfStockItems(user: User | null): InventoryItem[] {
-  const items = getInventoryItems(user)
+export async function getOutOfStockItems(user: User | null): Promise<InventoryItem[]> {
+  const items = await getInventoryItems(user)
   return items.filter(item => item.currentStock === 0)
 }
 
-export function getInventoryItemsBySupplier(supplier: string, user: User | null): InventoryItem[] {
-  const items = getInventoryItems(user)
+export async function getInventoryItemsBySupplier(supplier: string, user: User | null): Promise<InventoryItem[]> {
+  const items = await getInventoryItems(user)
   return items.filter(item => item.supplier === supplier)
 }
 
-export function getExpiringItems(daysUntilExpiry: number, user: User | null): InventoryItem[] {
-  const items = getInventoryItems(user)
+export async function getExpiringItems(daysUntilExpiry: number, user: User | null): Promise<InventoryItem[]> {
+  const items = await getInventoryItems(user)
   const cutoffDate = new Date()
   cutoffDate.setDate(cutoffDate.getDate() + daysUntilExpiry)
   
@@ -51,8 +60,8 @@ export function getExpiringItems(daysUntilExpiry: number, user: User | null): In
   )
 }
 
-export function searchInventoryItems(searchTerm: string, user: User | null): InventoryItem[] {
-  const items = getInventoryItems(user)
+export async function searchInventoryItems(searchTerm: string, user: User | null): Promise<InventoryItem[]> {
+  const items = await getInventoryItems(user)
   const term = searchTerm.toLowerCase()
   
   return items.filter(item => 
@@ -62,7 +71,7 @@ export function searchInventoryItems(searchTerm: string, user: User | null): Inv
   )
 }
 
-export function getTotalInventoryValue(user: User | null): number {
-  const items = getInventoryItems(user)
+export async function getTotalInventoryValue(user: User | null): Promise<number> {
+  const items = await getInventoryItems(user)
   return items.reduce((total, item) => total + (item.currentStock * item.costPerUnit), 0)
 }

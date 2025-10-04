@@ -238,6 +238,7 @@ export interface NavigationPermission {
 export interface OrganizationNavigationSettings {
   id: string
   organizationId: string
+  adminPermissions: NavigationPermission[]
   ownerPermissions: NavigationPermission[]
   cashierPermissions: NavigationPermission[]
   createdAt: Date

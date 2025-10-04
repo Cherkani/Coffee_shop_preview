@@ -1,5 +1,6 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { useAppStore } from "@/lib/store"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -19,11 +20,47 @@ const roleIcons = {
 
 export function LoginScreen() {
   const { signIn } = useAppStore()
-  
-  // Get all users for login screen (no filtering)
-  const users = getAllUsers()
-  const superuser = getSuperUser()
-  const groupedByOrg = getUsersGroupedByOrganization()
+  const [users, setUsers] = useState<User[]>([])
+  const [superuser, setSuperuser] = useState<User | undefined>()
+  const [groupedByOrg, setGroupedByOrg] = useState<Record<string, User[]>>({})
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const loadUsers = async () => {
+      try {
+        setLoading(true)
+        const [allUsers, superUser, grouped] = await Promise.all([
+          getAllUsers(),
+          getSuperUser(),
+          getUsersGroupedByOrganization()
+        ])
+        
+        setUsers(allUsers)
+        setSuperuser(superUser)
+        setGroupedByOrg(grouped)
+      } catch (error) {
+        console.error("Failed to load users:", error)
+        setUsers([])
+        setSuperuser(undefined)
+        setGroupedByOrg({})
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadUsers()
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold mb-2">CoffeeShop POS</h1>
+          <p className="text-muted-foreground">Loading users...</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">

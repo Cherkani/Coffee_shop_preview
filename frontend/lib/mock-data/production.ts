@@ -1,49 +1,21 @@
 import type { Production } from "../types"
+import { ApiService } from "../services/api-service"
 
-export const mockProductions: Production[] = [
-  {
-    id: "1",
-    itemName: "Colombian Coffee Beans",
-    category: "Coffee Beans",
-    quantityProduced: 50,
-    unit: "lbs",
-    costPerUnit: 12.0,
-    totalCost: 600.0,
-    productionDate: new Date("2024-01-20"),
-    expiryDate: new Date("2024-07-20"),
-    locationId: "loc2",
-    producedBy: "Maria Rodriguez",
-    status: "completed",
-    notes: "Premium single-origin beans, medium roast",
-  },
-  {
-    id: "2",
-    itemName: "Vanilla Syrup",
-    category: "Syrups",
-    quantityProduced: 24,
-    unit: "bottles",
-    costPerUnit: 4.5,
-    totalCost: 108.0,
-    productionDate: new Date("2024-01-18"),
-    expiryDate: new Date("2024-04-18"),
-    locationId: "loc3",
-    producedBy: "David Kim",
-    status: "ready-for-sale",
-    notes: "Made with real vanilla beans",
-  },
-  {
-    id: "3",
-    itemName: "Croissants",
-    category: "Pastries",
-    quantityProduced: 120,
-    unit: "count",
-    costPerUnit: 0.85,
-    totalCost: 102.0,
-    productionDate: new Date("2024-01-22"),
-    expiryDate: new Date("2024-01-24"),
-    locationId: "loc4",
-    producedBy: "Sophie Chen",
-    status: "in-progress",
-    notes: "Fresh daily batch",
-  },
-]
+// Fetch production data from JSON server
+export const getMockProductions = async (): Promise<Production[]> => {
+  try {
+    const production = await ApiService.getProduction()
+    return production.map(item => ({
+      ...item,
+      productionDate: new Date(item.productionDate),
+      expiryDate: new Date(item.expiryDate)
+    }))
+  } catch (error) {
+    console.error("Failed to fetch production data from API:", error)
+    // Fallback to empty array if API fails
+    return []
+  }
+}
+
+// For backward compatibility, export a function that returns the data
+export const mockProductions = getMockProductions

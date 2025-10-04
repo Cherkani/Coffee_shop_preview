@@ -1,26 +1,20 @@
 import type { Transaction } from "../types"
+import { ApiService } from "../services/api-service"
 
-export const mockTransactions: Transaction[] = [
-  {
-    id: "txn1001",
-    orderId: "1001",
-    amount: 5.6,
-    paymentMethod: "credit_card",
-    status: "completed",
-    customerName: "Alice Johnson",
-    locationId: "1",
-    cashierId: "4",
-    createdAt: new Date(Date.now() - 5 * 60000),
-  },
-  {
-    id: "txn1002",
-    orderId: "1002",
-    amount: 10.25,
-    paymentMethod: "cash",
-    status: "completed",
-    customerName: "Bob Smith",
-    locationId: "1",
-    cashierId: "4",
-    createdAt: new Date(Date.now() - 12 * 60000),
-  },
-]
+// Fetch transactions from JSON server
+export const getMockTransactions = async (): Promise<Transaction[]> => {
+  try {
+    const transactions = await ApiService.getTransactions()
+    return transactions.map(transaction => ({
+      ...transaction,
+      createdAt: new Date(transaction.createdAt)
+    }))
+  } catch (error) {
+    console.error("Failed to fetch transactions from API:", error)
+    // Fallback to empty array if API fails
+    return []
+  }
+}
+
+// For backward compatibility, export a function that returns the data
+export const mockTransactions = getMockTransactions

@@ -1,30 +1,20 @@
 import type { InventoryItem } from "../types"
+import { ApiService } from "../services/api-service"
 
-export const mockInventoryItems: InventoryItem[] = [
-  {
-    id: "inv1",
-    name: "Colombian Coffee Beans",
-    category: "Coffee Beans",
-    currentStock: 45,
-    minStock: 20,
-    maxStock: 100,
-    unit: "lb",
-    costPerUnit: 12.5,
-    supplierId: "sup1",
-    locationId: "1",
-    lastRestocked: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
-  },
-  {
-    id: "inv2",
-    name: "Whole Milk",
-    category: "Dairy",
-    currentStock: 8,
-    minStock: 15,
-    maxStock: 50,
-    unit: "gallon",
-    costPerUnit: 3.25,
-    supplierId: "sup2",
-    locationId: "1",
-    lastRestocked: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
-  },
-]
+// Fetch inventory items from JSON server
+export const getMockInventoryItems = async (): Promise<InventoryItem[]> => {
+  try {
+    const inventory = await ApiService.getInventory()
+    return inventory.map(item => ({
+      ...item,
+      lastRestocked: new Date(item.lastRestocked)
+    }))
+  } catch (error) {
+    console.error("Failed to fetch inventory from API:", error)
+    // Fallback to empty array if API fails
+    return []
+  }
+}
+
+// For backward compatibility, export a function that returns the data
+export const mockInventoryItems = getMockInventoryItems

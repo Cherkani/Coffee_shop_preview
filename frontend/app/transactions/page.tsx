@@ -1,5 +1,6 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { useAppStore } from "@/lib/store"
 import { getTransactions } from "@/lib/services"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -7,18 +8,64 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Receipt, Search, Filter, Download, CreditCard, DollarSign } from "lucide-react"
-import { useState } from "react"
-
+import type { Transaction } from "@/lib/types"
 
 export default function TransactionsPage() {
   const { currentUser } = useAppStore()
   const [searchTerm, setSearchTerm] = useState("")
-  const transactions = getTransactions(currentUser)
+  const [transactions, setTransactions] = useState<Transaction[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const loadTransactions = async () => {
+      if (!currentUser) return
+
+      try {
+        setLoading(true)
+        const transactionsData = await getTransactions(currentUser)
+        setTransactions(transactionsData)
+      } catch (error) {
+        console.error("Failed to load transactions:", error)
+        setTransactions([])
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadTransactions()
+  }, [currentUser])
 
   if (!currentUser) {
     return (
       <div className="flex items-center justify-center h-full">
         <p className="text-muted-foreground">Please sign in to view transactions.</p>
+      </div>
+    )
+  }
+
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-2xl font-semibold">Transactions</h1>
+            <p className="text-muted-foreground">Loading transactions...</p>
+          </div>
+        </div>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {[...Array(4)].map((_, i) => (
+            <Card key={i} className="animate-pulse">
+              <CardHeader>
+                <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+              </CardHeader>
+              <CardContent>
+                <div className="h-3 bg-gray-200 rounded w-full mb-2"></div>
+                <div className="h-3 bg-gray-200 rounded w-2/3"></div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       </div>
     )
   }

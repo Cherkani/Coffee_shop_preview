@@ -1,64 +1,22 @@
 import type { MarketplaceItem } from "../types"
+import { ApiService } from "../services/api-service"
 
-export const mockMarketplaceItems: MarketplaceItem[] = [
-  {
-    id: "1",
-    name: "Premium Colombian Coffee Beans",
-    category: "Coffee Beans",
-    description: "Single-origin Colombian beans, medium roast, perfect for espresso",
-    unit: "lbs",
-    pricePerUnit: 15.5,
-    availableQuantity: 200,
-    minOrderQuantity: 10,
-    sellerId: "admin2",
-    sellerName: "Maria Rodriguez",
-    sellerLocationId: "loc2",
-    sellerLocationName: "Downtown Roastery",
-    quality: "Premium",
-    certifications: ["Organic", "Fair Trade"],
-    productionDate: new Date("2024-01-20"),
-    expiryDate: new Date("2024-07-20"),
-    isActive: true,
-    createdAt: new Date("2024-01-21"),
-  },
-  {
-    id: "2",
-    name: "House-Made Vanilla Syrup",
-    category: "Syrups",
-    description: "Artisanal vanilla syrup made with real vanilla beans",
-    unit: "bottles",
-    pricePerUnit: 8.75,
-    availableQuantity: 50,
-    minOrderQuantity: 5,
-    sellerId: "admin3",
-    sellerName: "David Kim",
-    sellerLocationId: "loc3",
-    sellerLocationName: "Westside Cafe",
-    quality: "Premium",
-    certifications: ["Natural"],
-    productionDate: new Date("2024-01-18"),
-    expiryDate: new Date("2024-04-18"),
-    isActive: true,
-    createdAt: new Date("2024-01-19"),
-  },
-  {
-    id: "3",
-    name: "Fresh Croissants",
-    category: "Pastries",
-    description: "Buttery, flaky croissants baked fresh daily",
-    unit: "dozen",
-    pricePerUnit: 18.0,
-    availableQuantity: 20,
-    minOrderQuantity: 2,
-    sellerId: "admin4",
-    sellerName: "Sophie Chen",
-    sellerLocationId: "loc4",
-    sellerLocationName: "Northside Bakery",
-    quality: "Premium",
-    certifications: ["Fresh Daily"],
-    productionDate: new Date("2024-01-22"),
-    expiryDate: new Date("2024-01-24"),
-    isActive: true,
-    createdAt: new Date("2024-01-22"),
-  },
-]
+// Fetch marketplace items from JSON server
+export const getMockMarketplaceItems = async (): Promise<MarketplaceItem[]> => {
+  try {
+    const marketplace = await ApiService.getMarketplace()
+    return marketplace.map(item => ({
+      ...item,
+      productionDate: new Date(item.productionDate),
+      expiryDate: new Date(item.expiryDate),
+      createdAt: new Date(item.createdAt)
+    }))
+  } catch (error) {
+    console.error("Failed to fetch marketplace items from API:", error)
+    // Fallback to empty array if API fails
+    return []
+  }
+}
+
+// For backward compatibility, export a function that returns the data
+export const mockMarketplaceItems = getMockMarketplaceItems

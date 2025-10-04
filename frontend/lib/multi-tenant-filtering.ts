@@ -30,11 +30,11 @@ export function filterProductsByTenant(
     return filteredProducts
   }
   
-  // Admin and cashier can see products in their location
-  if (user.locationId) {
+  // Admin and cashier can see all products in their organization
+  // All users within the same organization can see all products from that organization
+  if (user.role === "admin" || user.role === "cashier") {
     return products.filter(product => 
-      product.organizationId === user.organizationId && 
-      product.locationId === user.locationId
+      product.organizationId === user.organizationId
     )
   }
   
@@ -66,11 +66,10 @@ export function filterOrdersByTenant(
     return filteredOrders
   }
   
-  // Admin and cashier can see orders in their location
-  if (user.locationId) {
+  // Admin and cashier can see all orders in their organization
+  if (user.role === "admin" || user.role === "cashier") {
     return orders.filter(order => 
-      order.organizationId === user.organizationId && 
-      order.locationId === user.locationId
+      order.organizationId === user.organizationId
     )
   }
   
@@ -102,11 +101,10 @@ export function filterTransactionsByTenant(
     return filteredTransactions
   }
   
-  // Admin and cashier can see transactions in their location
-  if (user.locationId) {
+  // Admin and cashier can see all transactions in their organization
+  if (user.role === "admin" || user.role === "cashier") {
     return transactions.filter(transaction => 
-      transaction.organizationId === user.organizationId && 
-      transaction.locationId === user.locationId
+      transaction.organizationId === user.organizationId
     )
   }
   
@@ -138,11 +136,10 @@ export function filterInventoryByTenant(
     return filteredInventory
   }
   
-  // Admin and cashier can see inventory in their location
-  if (user.locationId) {
+  // Admin and cashier can see all inventory in their organization
+  if (user.role === "admin" || user.role === "cashier") {
     return inventory.filter(item => 
-      item.organizationId === user.organizationId && 
-      item.locationId === user.locationId
+      item.organizationId === user.organizationId
     )
   }
   

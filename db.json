@@ -1,0 +1,1409 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "name": "Super Admin",
+      "email": "super@coffeeshop.com",
+      "role": "superuser",
+      "organizationId": null,
+      "locationId": null,
+      "isActive": true,
+      "createdAt": "2023-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "2",
+      "name": "John Owner",
+      "email": "john@brewbean.com",
+      "role": "owner",
+      "organizationId": "1",
+      "locationId": null,
+      "isActive": true,
+      "createdAt": "2023-01-15T00:00:00.000Z"
+    },
+    {
+      "id": "3",
+      "name": "Admin Brew Bean",
+      "email": "admin@brewbean.com",
+      "role": "admin",
+      "organizationId": "1",
+      "locationId": "1",
+      "isActive": true,
+      "createdAt": "2023-01-20T00:00:00.000Z"
+    },
+    {
+      "id": "4",
+      "name": "Mike Cashier",
+      "email": "mike@brewbean.com",
+      "role": "cashier",
+      "organizationId": "1",
+      "locationId": "1",
+      "isActive": true,
+      "createdAt": "2023-02-15T00:00:00.000Z"
+    },
+    {
+      "id": "5",
+      "name": "Lisa Cashier",
+      "email": "lisa@brewbean.com",
+      "role": "cashier",
+      "organizationId": "1",
+      "locationId": "1",
+      "isActive": true,
+      "createdAt": "2023-03-01T00:00:00.000Z"
+    },
+    {
+      "id": "6",
+      "name": "David Barista",
+      "email": "david@brewbean.com",
+      "role": "cashier",
+      "organizationId": "1",
+      "locationId": "2",
+      "isActive": true,
+      "createdAt": "2023-03-15T00:00:00.000Z"
+    },
+    {
+      "id": "7",
+      "name": "Emma Wilson",
+      "email": "emma@morninggrind.com",
+      "role": "owner",
+      "organizationId": "2",
+      "locationId": null,
+      "isActive": true,
+      "createdAt": "2023-03-20T00:00:00.000Z"
+    },
+    {
+      "id": "8",
+      "name": "Admin Morning Grind",
+      "email": "admin@morninggrind.com",
+      "role": "admin",
+      "organizationId": "2",
+      "locationId": "3",
+      "isActive": true,
+      "createdAt": "2023-03-25T00:00:00.000Z"
+    },
+    {
+      "id": "9",
+      "name": "Chris Cashier",
+      "email": "chris@morninggrind.com",
+      "role": "cashier",
+      "organizationId": "2",
+      "locationId": "3",
+      "isActive": true,
+      "createdAt": "2023-04-01T00:00:00.000Z"
+    },
+    {
+      "id": "10",
+      "name": "Sarah Cashier",
+      "email": "sarah@morninggrind.com",
+      "role": "cashier",
+      "organizationId": "2",
+      "locationId": "3",
+      "isActive": true,
+      "createdAt": "2023-04-15T00:00:00.000Z"
+    },
+    {
+      "id": "11",
+      "name": "Alex Cashier",
+      "email": "alex@morninggrind.com",
+      "role": "cashier",
+      "organizationId": "2",
+      "locationId": "4",
+      "isActive": true,
+      "createdAt": "2023-05-01T00:00:00.000Z"
+    }
+  ],
+  "organizations": [
+    {
+      "id": "1",
+      "name": "Brew & Bean Coffee Co.",
+      "ownerId": "2",
+      "adminId": "3",
+      "subscriptionPlan": "pro",
+      "status": "active",
+      "createdAt": "2023-01-15T00:00:00.000Z",
+      "monthlyRevenue": 15750,
+      "locations": [
+        {
+          "id": "1",
+          "name": "Downtown Location",
+          "address": "123 Main St, Downtown",
+          "organizationId": "1"
+        },
+        {
+          "id": "2",
+          "name": "Mall Location",
+          "address": "456 Shopping Center, Westside Mall",
+          "organizationId": "1"
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "name": "Morning Grind Coffee",
+      "ownerId": "7",
+      "adminId": "8",
+      "subscriptionPlan": "basic",
+      "status": "active",
+      "createdAt": "2023-03-20T00:00:00.000Z",
+      "monthlyRevenue": 8500,
+      "locations": [
+        {
+          "id": "3",
+          "name": "Main Street",
+          "address": "789 Main St, City Center",
+          "organizationId": "2"
+        },
+        {
+          "id": "4",
+          "name": "Riverside",
+          "address": "456 River Ave, Riverside District",
+          "organizationId": "2"
+        }
+      ]
+    }
+  ],
+  "products": [
+    {
+      "id": "1-1-1",
+      "name": "Espresso",
+      "category": "Coffee",
+      "basePrice": 2.5,
+      "organizationId": "1",
+      "locationId": "1",
+      "sizes": [
+        {
+          "id": "s1",
+          "name": "Single",
+          "price": 2.5
+        },
+        {
+          "id": "s2",
+          "name": "Double",
+          "price": 3.5
+        }
+      ],
+      "modifiers": [
+        {
+          "id": "m1",
+          "name": "Extra Shot",
+          "price": 0.75,
+          "category": "Coffee"
+        },
+        {
+          "id": "m2",
+          "name": "Decaf",
+          "price": 0,
+          "category": "Coffee"
+        }
+      ],
+      "available": true
+    },
+    {
+      "id": "1-1-2",
+      "name": "Cappuccino",
+      "category": "Coffee",
+      "basePrice": 4.25,
+      "organizationId": "1",
+      "locationId": "1",
+      "sizes": [
+        {
+          "id": "s3",
+          "name": "Small",
+          "price": 4.25
+        },
+        {
+          "id": "s4",
+          "name": "Medium",
+          "price": 4.95
+        },
+        {
+          "id": "s5",
+          "name": "Large",
+          "price": 5.65
+        }
+      ],
+      "modifiers": [
+        {
+          "id": "m3",
+          "name": "Extra Shot",
+          "price": 0.75,
+          "category": "Coffee"
+        },
+        {
+          "id": "m4",
+          "name": "Oat Milk",
+          "price": 0.65,
+          "category": "Milk"
+        },
+        {
+          "id": "m5",
+          "name": "Almond Milk",
+          "price": 0.65,
+          "category": "Milk"
+        }
+      ],
+      "available": true
+    },
+    {
+      "id": "1-2-1",
+      "name": "Latte",
+      "category": "Coffee",
+      "basePrice": 4.75,
+      "organizationId": "1",
+      "locationId": "2",
+      "sizes": [
+        {
+          "id": "s6",
+          "name": "Small",
+          "price": 4.75
+        },
+        {
+          "id": "s7",
+          "name": "Medium",
+          "price": 5.45
+        },
+        {
+          "id": "s8",
+          "name": "Large",
+          "price": 6.15
+        }
+      ],
+      "modifiers": [
+        {
+          "id": "m6",
+          "name": "Extra Shot",
+          "price": 0.75,
+          "category": "Coffee"
+        },
+        {
+          "id": "m7",
+          "name": "Oat Milk",
+          "price": 0.65,
+          "category": "Milk"
+        },
+        {
+          "id": "m8",
+          "name": "Vanilla Syrup",
+          "price": 0.5,
+          "category": "Syrup"
+        }
+      ],
+      "available": true
+    },
+    {
+      "id": "2-3-1",
+      "name": "House Blend",
+      "category": "Coffee",
+      "basePrice": 3.25,
+      "organizationId": "2",
+      "locationId": "3",
+      "sizes": [
+        {
+          "id": "s9",
+          "name": "Small",
+          "price": 3.25
+        },
+        {
+          "id": "s10",
+          "name": "Medium",
+          "price": 3.95
+        },
+        {
+          "id": "s11",
+          "name": "Large",
+          "price": 4.65
+        }
+      ],
+      "modifiers": [
+        {
+          "id": "m9",
+          "name": "Extra Shot",
+          "price": 0.75,
+          "category": "Coffee"
+        },
+        {
+          "id": "m10",
+          "name": "Oat Milk",
+          "price": 0.65,
+          "category": "Milk"
+        }
+      ],
+      "available": true
+    },
+    {
+      "id": "2-3-2",
+      "name": "Cold Brew",
+      "category": "Cold Drinks",
+      "basePrice": 3.75,
+      "organizationId": "2",
+      "locationId": "3",
+      "sizes": [
+        {
+          "id": "s12",
+          "name": "Regular",
+          "price": 3.75
+        },
+        {
+          "id": "s13",
+          "name": "Large",
+          "price": 4.45
+        }
+      ],
+      "modifiers": [
+        {
+          "id": "m11",
+          "name": "Vanilla Syrup",
+          "price": 0.5,
+          "category": "Syrup"
+        },
+        {
+          "id": "m12",
+          "name": "Caramel Syrup",
+          "price": 0.5,
+          "category": "Syrup"
+        }
+      ],
+      "available": true
+    },
+    {
+      "id": "8adf",
+      "name": "Test Product",
+      "category": "Test",
+      "basePrice": 5.99,
+      "available": true,
+      "organizationId": "org-1",
+      "locationId": "loc-1"
+    },
+    {
+      "id": "4b78",
+      "name": "API Test Product",
+      "category": "Test",
+      "basePrice": 9.99,
+      "available": true,
+      "organizationId": "org-1",
+      "locationId": "loc-1"
+    }
+  ],
+  "orders": [
+    {
+      "id": "order-1",
+      "customerName": "John Doe",
+      "items": [
+        {
+          "productId": "1-1-1",
+          "productName": "Espresso",
+          "quantity": 2,
+          "price": 2.5,
+          "total": 5
+        }
+      ],
+      "total": 5,
+      "status": "completed",
+      "organizationId": "1",
+      "locationId": "1",
+      "cashierId": "4",
+      "createdAt": "2023-12-01T10:30:00.000Z"
+    }
+  ],
+  "transactions": [
+    {
+      "id": "txn1001",
+      "orderId": "1001",
+      "amount": 5.6,
+      "paymentMethod": "credit_card",
+      "status": "completed",
+      "customerName": "Alice Johnson",
+      "locationId": "1",
+      "cashierId": "4",
+      "organizationId": "1",
+      "createdAt": "2024-01-22T10:30:00.000Z"
+    },
+    {
+      "id": "txn1002",
+      "orderId": "1002",
+      "amount": 10.25,
+      "paymentMethod": "cash",
+      "status": "completed",
+      "customerName": "Bob Smith",
+      "locationId": "1",
+      "cashierId": "4",
+      "organizationId": "1",
+      "createdAt": "2024-01-22T10:15:00.000Z"
+    }
+  ],
+  "inventory": [
+    {
+      "id": "inv1",
+      "name": "Colombian Coffee Beans",
+      "category": "Coffee Beans",
+      "currentStock": 45,
+      "minStock": 20,
+      "maxStock": 100,
+      "unit": "lb",
+      "costPerUnit": 12.5,
+      "supplierId": "sup1",
+      "locationId": "1",
+      "organizationId": "1",
+      "lastRestocked": "2024-01-19T00:00:00.000Z"
+    },
+    {
+      "id": "inv2",
+      "name": "Whole Milk",
+      "category": "Dairy",
+      "currentStock": 8,
+      "minStock": 15,
+      "maxStock": 50,
+      "unit": "gallon",
+      "costPerUnit": 3.25,
+      "supplierId": "sup2",
+      "locationId": "1",
+      "organizationId": "1",
+      "lastRestocked": "2024-01-21T00:00:00.000Z"
+    }
+  ],
+  "suppliers": [
+    {
+      "id": "sup1",
+      "name": "Premium Coffee Beans Co.",
+      "contactEmail": "orders@premiumcoffee.com",
+      "contactPhone": "+1-555-0123",
+      "address": "123 Coffee Farm Rd, Colombia",
+      "category": "Coffee Beans",
+      "rating": 4.8,
+      "isActive": true,
+      "products": [
+        {
+          "id": "p1",
+          "name": "Colombian Arabica Beans",
+          "category": "Coffee Beans",
+          "unitPrice": 12.5,
+          "unit": "lb",
+          "minOrderQty": 50
+        },
+        {
+          "id": "p2",
+          "name": "Ethiopian Single Origin",
+          "category": "Coffee Beans",
+          "unitPrice": 15.75,
+          "unit": "lb",
+          "minOrderQty": 25
+        }
+      ]
+    },
+    {
+      "id": "sup2",
+      "name": "Dairy Fresh Suppliers",
+      "contactEmail": "sales@dairyfresh.com",
+      "contactPhone": "+1-555-0456",
+      "address": "456 Farm Valley, Wisconsin",
+      "category": "Dairy Products",
+      "rating": 4.6,
+      "isActive": true,
+      "products": [
+        {
+          "id": "p3",
+          "name": "Whole Milk",
+          "category": "Dairy",
+          "unitPrice": 3.25,
+          "unit": "gallon",
+          "minOrderQty": 10
+        },
+        {
+          "id": "p4",
+          "name": "Oat Milk",
+          "category": "Alternative Milk",
+          "unitPrice": 4.5,
+          "unit": "gallon",
+          "minOrderQty": 5
+        }
+      ]
+    }
+  ],
+  "marketplace": [
+    {
+      "id": "1",
+      "name": "Premium Colombian Coffee Beans",
+      "category": "Coffee Beans",
+      "description": "Single-origin Colombian beans, medium roast, perfect for espresso",
+      "unit": "lbs",
+      "pricePerUnit": 15.5,
+      "availableQuantity": 200,
+      "minOrderQuantity": 10,
+      "sellerId": "admin2",
+      "sellerName": "Maria Rodriguez",
+      "sellerLocationId": "loc2",
+      "sellerLocationName": "Downtown Roastery",
+      "quality": "Premium",
+      "certifications": [
+        "Organic",
+        "Fair Trade"
+      ],
+      "productionDate": "2024-01-20T00:00:00.000Z",
+      "expiryDate": "2024-07-20T00:00:00.000Z",
+      "isActive": true,
+      "createdAt": "2024-01-21T00:00:00.000Z"
+    },
+    {
+      "id": "2",
+      "name": "House-Made Vanilla Syrup",
+      "category": "Syrups",
+      "description": "Artisanal vanilla syrup made with real vanilla beans",
+      "unit": "bottles",
+      "pricePerUnit": 8.75,
+      "availableQuantity": 50,
+      "minOrderQuantity": 5,
+      "sellerId": "admin3",
+      "sellerName": "David Kim",
+      "sellerLocationId": "loc3",
+      "sellerLocationName": "Westside Cafe",
+      "quality": "Premium",
+      "certifications": [
+        "Natural"
+      ],
+      "productionDate": "2024-01-18T00:00:00.000Z",
+      "expiryDate": "2024-04-18T00:00:00.000Z",
+      "isActive": true,
+      "createdAt": "2024-01-19T00:00:00.000Z"
+    },
+    {
+      "id": "3",
+      "name": "Fresh Croissants",
+      "category": "Pastries",
+      "description": "Buttery, flaky croissants baked fresh daily",
+      "unit": "dozen",
+      "pricePerUnit": 18,
+      "availableQuantity": 20,
+      "minOrderQuantity": 2,
+      "sellerId": "admin4",
+      "sellerName": "Sophie Chen",
+      "sellerLocationId": "loc4",
+      "sellerLocationName": "Northside Bakery",
+      "quality": "Premium",
+      "certifications": [
+        "Fresh Daily"
+      ],
+      "productionDate": "2024-01-22T00:00:00.000Z",
+      "expiryDate": "2024-01-24T00:00:00.000Z",
+      "isActive": true,
+      "createdAt": "2024-01-22T00:00:00.000Z"
+    }
+  ],
+  "production": [
+    {
+      "id": "1",
+      "itemName": "Colombian Coffee Beans",
+      "category": "Coffee Beans",
+      "quantityProduced": 50,
+      "unit": "lbs",
+      "costPerUnit": 12,
+      "totalCost": 600,
+      "productionDate": "2024-01-20T00:00:00.000Z",
+      "expiryDate": "2024-07-20T00:00:00.000Z",
+      "locationId": "loc2",
+      "producedBy": "Maria Rodriguez",
+      "status": "completed",
+      "notes": "Premium single-origin beans, medium roast"
+    },
+    {
+      "id": "2",
+      "itemName": "Vanilla Syrup",
+      "category": "Syrups",
+      "quantityProduced": 24,
+      "unit": "bottles",
+      "costPerUnit": 4.5,
+      "totalCost": 108,
+      "productionDate": "2024-01-18T00:00:00.000Z",
+      "expiryDate": "2024-04-18T00:00:00.000Z",
+      "locationId": "loc3",
+      "producedBy": "David Kim",
+      "status": "ready-for-sale",
+      "notes": "Made with real vanilla beans"
+    },
+    {
+      "id": "3",
+      "itemName": "Croissants",
+      "category": "Pastries",
+      "quantityProduced": 120,
+      "unit": "count",
+      "costPerUnit": 0.85,
+      "totalCost": 102,
+      "productionDate": "2024-01-22T00:00:00.000Z",
+      "expiryDate": "2024-01-24T00:00:00.000Z",
+      "locationId": "loc4",
+      "producedBy": "Sophie Chen",
+      "status": "in-progress",
+      "notes": "Fresh daily batch"
+    }
+  ],
+  "billing": [
+    {
+      "id": "1",
+      "org": "Brew & Bean Coffee Co.",
+      "amount": 299,
+      "plan": "Pro",
+      "status": "paid",
+      "date": "2024-01-22T00:00:00.000Z"
+    },
+    {
+      "id": "2",
+      "org": "Morning Grind Coffee",
+      "amount": 99,
+      "plan": "Basic",
+      "status": "paid",
+      "date": "2024-01-22T00:00:00.000Z"
+    },
+    {
+      "id": "3",
+      "org": "Coffee Corner",
+      "amount": 599,
+      "plan": "Enterprise",
+      "status": "overdue",
+      "date": "2024-01-20T00:00:00.000Z"
+    },
+    {
+      "id": "4",
+      "org": "Artisan Roasters",
+      "amount": 299,
+      "plan": "Pro",
+      "status": "paid",
+      "date": "2024-01-21T00:00:00.000Z"
+    },
+    {
+      "id": "5",
+      "org": "Morning Grind Coffee",
+      "amount": 99,
+      "plan": "Basic",
+      "status": "pending",
+      "date": "2024-01-22T00:00:00.000Z"
+    }
+  ],
+  "metrics": {
+    "superuser": {
+      "totalOrganizations": 4,
+      "totalLocations": 11,
+      "totalUsers": 19,
+      "monthlyRevenue": 42500,
+      "activeSubscriptions": 4,
+      "revenueGrowth": 12.5,
+      "userGrowth": 8.3,
+      "systemHealth": 98,
+      "pendingIssues": 2
+    },
+    "owner": {
+      "totalLocations": 4,
+      "totalStaff": 6,
+      "monthlyRevenue": 15750,
+      "dailyRevenue": 525,
+      "ordersToday": 127,
+      "averageOrderValue": 8.45,
+      "topSellingProduct": "Cappuccino",
+      "revenueGrowth": 8.2,
+      "customerSatisfaction": 4.7
+    },
+    "admin": {
+      "dailyRevenue": 1250,
+      "ordersToday": 89,
+      "averageOrderValue": 7.85,
+      "staffOnDuty": 3,
+      "inventoryAlerts": 2,
+      "customerSatisfaction": 4.6,
+      "topSellingProduct": "Latte",
+      "peakHour": "9:00 AM"
+    },
+    "cashier": {
+      "ordersProcessed": 23,
+      "totalSales": 195.5,
+      "averageOrderValue": 8.5,
+      "ordersInQueue": 3,
+      "currentShiftStart": "8:00 AM",
+      "hoursWorked": 4.5
+    }
+  },
+  "navigationSettings": [
+    {
+      "id": "nav-settings-1",
+      "organizationId": "1",
+      "adminPermissions": [
+        {
+          "id": "admin-dashboard-1",
+          "name": "Dashboard",
+          "href": "/dashboard",
+          "icon": "LayoutDashboard",
+          "enabled": true,
+          "role": "admin",
+          "organizationId": "1",
+          "createdAt": "2023-01-20T00:00:00.000Z",
+          "updatedAt": "2023-01-20T00:00:00.000Z"
+        },
+        {
+          "id": "admin-product-management-1",
+          "name": "Product Management",
+          "href": "/product-management",
+          "icon": "Package",
+          "enabled": true,
+          "role": "admin",
+          "organizationId": "1",
+          "createdAt": "2023-01-20T00:00:00.000Z",
+          "updatedAt": "2023-01-20T00:00:00.000Z"
+        },
+        {
+          "id": "admin-staff-1",
+          "name": "Staff Management",
+          "href": "/staff",
+          "icon": "Users",
+          "enabled": true,
+          "role": "admin",
+          "organizationId": "1",
+          "createdAt": "2023-01-20T00:00:00.000Z",
+          "updatedAt": "2023-01-20T00:00:00.000Z"
+        },
+        {
+          "id": "admin-navigation-settings-1",
+          "name": "Navigation Settings",
+          "href": "/navigation-settings",
+          "icon": "Settings",
+          "enabled": true,
+          "role": "admin",
+          "organizationId": "1",
+          "createdAt": "2023-01-20T00:00:00.000Z",
+          "updatedAt": "2023-01-20T00:00:00.000Z"
+        },
+        {
+          "id": "admin-inventory-1",
+          "name": "Inventory",
+          "href": "/inventory",
+          "icon": "Package",
+          "enabled": true,
+          "role": "admin",
+          "organizationId": "1",
+          "createdAt": "2023-01-20T00:00:00.000Z",
+          "updatedAt": "2023-01-20T00:00:00.000Z"
+        },
+        {
+          "id": "admin-reports-1",
+          "name": "Reports",
+          "href": "/reports",
+          "icon": "BarChart3",
+          "enabled": true,
+          "role": "admin",
+          "organizationId": "1",
+          "createdAt": "2023-01-20T00:00:00.000Z",
+          "updatedAt": "2023-01-20T00:00:00.000Z"
+        },
+        {
+          "id": "admin-transactions-1",
+          "name": "Transactions",
+          "href": "/transactions",
+          "icon": "Receipt",
+          "enabled": true,
+          "role": "admin",
+          "organizationId": "1",
+          "createdAt": "2023-01-20T00:00:00.000Z",
+          "updatedAt": "2023-01-20T00:00:00.000Z"
+        },
+        {
+          "id": "admin-kds-1",
+          "name": "KDS",
+          "href": "/kds",
+          "icon": "Monitor",
+          "enabled": true,
+          "role": "admin",
+          "organizationId": "1",
+          "createdAt": "2023-01-20T00:00:00.000Z",
+          "updatedAt": "2023-01-20T00:00:00.000Z"
+        },
+        {
+          "id": "admin-timeclock-1",
+          "name": "Time Clock",
+          "href": "/timeclock",
+          "icon": "Clock",
+          "enabled": true,
+          "role": "admin",
+          "organizationId": "1",
+          "createdAt": "2023-01-20T00:00:00.000Z",
+          "updatedAt": "2023-01-20T00:00:00.000Z"
+        }
+      ],
+      "ownerPermissions": [
+        {
+          "id": "owner-dashboard-1",
+          "name": "Dashboard",
+          "href": "/dashboard",
+          "icon": "LayoutDashboard",
+          "enabled": true,
+          "role": "owner",
+          "organizationId": "1",
+          "createdAt": "2023-01-20T00:00:00.000Z",
+          "updatedAt": "2023-01-20T00:00:00.000Z"
+        },
+        {
+          "id": "owner-locations-1",
+          "name": "Locations",
+          "href": "/locations",
+          "icon": "MapPin",
+          "enabled": true,
+          "role": "owner",
+          "organizationId": "1",
+          "createdAt": "2023-01-20T00:00:00.000Z",
+          "updatedAt": "2023-01-20T00:00:00.000Z"
+        },
+        {
+          "id": "owner-product-management-1",
+          "name": "Product Management",
+          "href": "/product-management",
+          "icon": "Package",
+          "enabled": true,
+          "role": "owner",
+          "organizationId": "1",
+          "createdAt": "2023-01-20T00:00:00.000Z",
+          "updatedAt": "2023-01-20T00:00:00.000Z"
+        },
+        {
+          "id": "owner-pos-1",
+          "name": "POS",
+          "href": "/pos",
+          "icon": "ShoppingCart",
+          "enabled": true,
+          "role": "owner",
+          "organizationId": "1",
+          "createdAt": "2023-01-20T00:00:00.000Z",
+          "updatedAt": "2023-01-20T00:00:00.000Z"
+        },
+        {
+          "id": "owner-cashier-sales-1",
+          "name": "Cashier Sales",
+          "href": "/cashier-sales",
+          "icon": "TrendingUp",
+          "enabled": true,
+          "role": "owner",
+          "organizationId": "1",
+          "createdAt": "2023-01-20T00:00:00.000Z",
+          "updatedAt": "2023-01-20T00:00:00.000Z"
+        },
+        {
+          "id": "owner-reports-1",
+          "name": "Reports",
+          "href": "/reports",
+          "icon": "BarChart3",
+          "enabled": true,
+          "role": "owner",
+          "organizationId": "1",
+          "createdAt": "2023-01-20T00:00:00.000Z",
+          "updatedAt": "2023-01-20T00:00:00.000Z"
+        },
+        {
+          "id": "owner-analytics-1",
+          "name": "Analytics",
+          "href": "/analytics",
+          "icon": "TrendingUp",
+          "enabled": true,
+          "role": "owner",
+          "organizationId": "1",
+          "createdAt": "2023-01-20T00:00:00.000Z",
+          "updatedAt": "2023-01-20T00:00:00.000Z"
+        },
+        {
+          "id": "owner-catalog-1",
+          "name": "Catalog",
+          "href": "/catalog",
+          "icon": "Package",
+          "enabled": true,
+          "role": "owner",
+          "organizationId": "1",
+          "createdAt": "2023-01-20T00:00:00.000Z",
+          "updatedAt": "2023-01-20T00:00:00.000Z"
+        },
+        {
+          "id": "owner-staff-1",
+          "name": "Staff",
+          "href": "/staff",
+          "icon": "Users",
+          "enabled": true,
+          "role": "owner",
+          "organizationId": "1",
+          "createdAt": "2023-01-20T00:00:00.000Z",
+          "updatedAt": "2023-01-20T00:00:00.000Z"
+        },
+        {
+          "id": "owner-payroll-1",
+          "name": "Payroll",
+          "href": "/payroll",
+          "icon": "DollarSign",
+          "enabled": true,
+          "role": "owner",
+          "organizationId": "1",
+          "createdAt": "2023-01-20T00:00:00.000Z",
+          "updatedAt": "2023-01-20T00:00:00.000Z"
+        },
+        {
+          "id": "owner-scheduling-1",
+          "name": "Scheduling",
+          "href": "/scheduling",
+          "icon": "Calendar",
+          "enabled": true,
+          "role": "owner",
+          "organizationId": "1",
+          "createdAt": "2023-01-20T00:00:00.000Z",
+          "updatedAt": "2023-01-20T00:00:00.000Z"
+        },
+        {
+          "id": "owner-suppliers-1",
+          "name": "Suppliers",
+          "href": "/suppliers",
+          "icon": "Truck",
+          "enabled": true,
+          "role": "owner",
+          "organizationId": "1",
+          "createdAt": "2023-01-20T00:00:00.000Z",
+          "updatedAt": "2023-01-20T00:00:00.000Z"
+        },
+        {
+          "id": "owner-marketplace-1",
+          "name": "Marketplace",
+          "href": "/marketplace",
+          "icon": "Store",
+          "enabled": true,
+          "role": "owner",
+          "organizationId": "1",
+          "createdAt": "2023-01-20T00:00:00.000Z",
+          "updatedAt": "2023-01-20T00:00:00.000Z"
+        },
+        {
+          "id": "owner-procurement-1",
+          "name": "Procurement",
+          "href": "/procurement",
+          "icon": "ShoppingBag",
+          "enabled": true,
+          "role": "owner",
+          "organizationId": "1",
+          "createdAt": "2023-01-20T00:00:00.000Z",
+          "updatedAt": "2023-01-20T00:00:00.000Z"
+        },
+        {
+          "id": "owner-settings-1",
+          "name": "Settings",
+          "href": "/settings",
+          "icon": "Settings",
+          "enabled": true,
+          "role": "owner",
+          "organizationId": "1",
+          "createdAt": "2023-01-20T00:00:00.000Z",
+          "updatedAt": "2023-01-20T00:00:00.000Z"
+        }
+      ],
+      "cashierPermissions": [
+        {
+          "id": "cashier-pos-1",
+          "name": "POS",
+          "href": "/pos",
+          "icon": "ShoppingCart",
+          "enabled": true,
+          "role": "cashier",
+          "organizationId": "1",
+          "createdAt": "2023-01-20T00:00:00.000Z",
+          "updatedAt": "2023-01-20T00:00:00.000Z"
+        },
+        {
+          "id": "cashier-kds-1",
+          "name": "KDS",
+          "href": "/kds",
+          "icon": "Monitor",
+          "enabled": true,
+          "role": "cashier",
+          "organizationId": "1",
+          "createdAt": "2023-01-20T00:00:00.000Z",
+          "updatedAt": "2023-01-20T00:00:00.000Z"
+        },
+        {
+          "id": "cashier-timeclock-1",
+          "name": "Time Clock",
+          "href": "/timeclock",
+          "icon": "Clock",
+          "enabled": true,
+          "role": "cashier",
+          "organizationId": "1",
+          "createdAt": "2023-01-20T00:00:00.000Z",
+          "updatedAt": "2023-01-20T00:00:00.000Z"
+        },
+        {
+          "id": "cashier-reports-1",
+          "name": "My Sales",
+          "href": "/reports",
+          "icon": "BarChart3",
+          "enabled": true,
+          "role": "cashier",
+          "organizationId": "1",
+          "createdAt": "2023-01-20T00:00:00.000Z",
+          "updatedAt": "2023-01-20T00:00:00.000Z"
+        },
+        {
+          "id": "cashier-transactions-1",
+          "name": "Transactions",
+          "href": "/transactions",
+          "icon": "Receipt",
+          "enabled": true,
+          "role": "cashier",
+          "organizationId": "1",
+          "createdAt": "2023-01-20T00:00:00.000Z",
+          "updatedAt": "2023-01-20T00:00:00.000Z"
+        }
+      ],
+      "createdAt": "2023-01-20T00:00:00.000Z",
+      "updatedAt": "2023-01-20T00:00:00.000Z"
+    },
+    {
+      "id": "nav-settings-2",
+      "organizationId": "2",
+      "adminPermissions": [
+        {
+          "id": "admin-dashboard-2",
+          "name": "Dashboard",
+          "href": "/dashboard",
+          "icon": "LayoutDashboard",
+          "enabled": true,
+          "role": "admin",
+          "organizationId": "2",
+          "createdAt": "2023-03-25T00:00:00.000Z",
+          "updatedAt": "2023-03-25T00:00:00.000Z"
+        },
+        {
+          "id": "admin-product-management-2",
+          "name": "Product Management",
+          "href": "/product-management",
+          "icon": "Package",
+          "enabled": true,
+          "role": "admin",
+          "organizationId": "2",
+          "createdAt": "2023-03-25T00:00:00.000Z",
+          "updatedAt": "2023-03-25T00:00:00.000Z"
+        },
+        {
+          "id": "admin-staff-2",
+          "name": "Staff Management",
+          "href": "/staff",
+          "icon": "Users",
+          "enabled": true,
+          "role": "admin",
+          "organizationId": "2",
+          "createdAt": "2023-03-25T00:00:00.000Z",
+          "updatedAt": "2023-03-25T00:00:00.000Z"
+        },
+        {
+          "id": "admin-navigation-settings-2",
+          "name": "Navigation Settings",
+          "href": "/navigation-settings",
+          "icon": "Settings",
+          "enabled": true,
+          "role": "admin",
+          "organizationId": "2",
+          "createdAt": "2023-03-25T00:00:00.000Z",
+          "updatedAt": "2023-03-25T00:00:00.000Z"
+        },
+        {
+          "id": "admin-inventory-2",
+          "name": "Inventory",
+          "href": "/inventory",
+          "icon": "Package",
+          "enabled": true,
+          "role": "admin",
+          "organizationId": "2",
+          "createdAt": "2023-03-25T00:00:00.000Z",
+          "updatedAt": "2023-03-25T00:00:00.000Z"
+        },
+        {
+          "id": "admin-reports-2",
+          "name": "Reports",
+          "href": "/reports",
+          "icon": "BarChart3",
+          "enabled": true,
+          "role": "admin",
+          "organizationId": "2",
+          "createdAt": "2023-03-25T00:00:00.000Z",
+          "updatedAt": "2023-03-25T00:00:00.000Z"
+        },
+        {
+          "id": "admin-transactions-2",
+          "name": "Transactions",
+          "href": "/transactions",
+          "icon": "Receipt",
+          "enabled": true,
+          "role": "admin",
+          "organizationId": "2",
+          "createdAt": "2023-03-25T00:00:00.000Z",
+          "updatedAt": "2023-03-25T00:00:00.000Z"
+        },
+        {
+          "id": "admin-kds-2",
+          "name": "KDS",
+          "href": "/kds",
+          "icon": "Monitor",
+          "enabled": true,
+          "role": "admin",
+          "organizationId": "2",
+          "createdAt": "2023-03-25T00:00:00.000Z",
+          "updatedAt": "2023-03-25T00:00:00.000Z"
+        },
+        {
+          "id": "admin-timeclock-2",
+          "name": "Time Clock",
+          "href": "/timeclock",
+          "icon": "Clock",
+          "enabled": true,
+          "role": "admin",
+          "organizationId": "2",
+          "createdAt": "2023-03-25T00:00:00.000Z",
+          "updatedAt": "2023-03-25T00:00:00.000Z"
+        }
+      ],
+      "ownerPermissions": [
+        {
+          "id": "owner-dashboard-2",
+          "name": "Dashboard",
+          "href": "/dashboard",
+          "icon": "LayoutDashboard",
+          "enabled": true,
+          "role": "owner",
+          "organizationId": "2",
+          "createdAt": "2023-03-25T00:00:00.000Z",
+          "updatedAt": "2023-03-25T00:00:00.000Z"
+        },
+        {
+          "id": "owner-locations-2",
+          "name": "Locations",
+          "href": "/locations",
+          "icon": "MapPin",
+          "enabled": true,
+          "role": "owner",
+          "organizationId": "2",
+          "createdAt": "2023-03-25T00:00:00.000Z",
+          "updatedAt": "2023-03-25T00:00:00.000Z"
+        },
+        {
+          "id": "owner-product-management-2",
+          "name": "Product Management",
+          "href": "/product-management",
+          "icon": "Package",
+          "enabled": true,
+          "role": "owner",
+          "organizationId": "2",
+          "createdAt": "2023-03-25T00:00:00.000Z",
+          "updatedAt": "2023-03-25T00:00:00.000Z"
+        },
+        {
+          "id": "owner-pos-2",
+          "name": "POS",
+          "href": "/pos",
+          "icon": "ShoppingCart",
+          "enabled": true,
+          "role": "owner",
+          "organizationId": "2",
+          "createdAt": "2023-03-25T00:00:00.000Z",
+          "updatedAt": "2023-03-25T00:00:00.000Z"
+        },
+        {
+          "id": "owner-cashier-sales-2",
+          "name": "Cashier Sales",
+          "href": "/cashier-sales",
+          "icon": "TrendingUp",
+          "enabled": true,
+          "role": "owner",
+          "organizationId": "2",
+          "createdAt": "2023-03-25T00:00:00.000Z",
+          "updatedAt": "2023-03-25T00:00:00.000Z"
+        },
+        {
+          "id": "owner-reports-2",
+          "name": "Reports",
+          "href": "/reports",
+          "icon": "BarChart3",
+          "enabled": true,
+          "role": "owner",
+          "organizationId": "2",
+          "createdAt": "2023-03-25T00:00:00.000Z",
+          "updatedAt": "2023-03-25T00:00:00.000Z"
+        },
+        {
+          "id": "owner-analytics-2",
+          "name": "Analytics",
+          "href": "/analytics",
+          "icon": "TrendingUp",
+          "enabled": true,
+          "role": "owner",
+          "organizationId": "2",
+          "createdAt": "2023-03-25T00:00:00.000Z",
+          "updatedAt": "2023-03-25T00:00:00.000Z"
+        },
+        {
+          "id": "owner-catalog-2",
+          "name": "Catalog",
+          "href": "/catalog",
+          "icon": "Package",
+          "enabled": true,
+          "role": "owner",
+          "organizationId": "2",
+          "createdAt": "2023-03-25T00:00:00.000Z",
+          "updatedAt": "2023-03-25T00:00:00.000Z"
+        },
+        {
+          "id": "owner-staff-2",
+          "name": "Staff",
+          "href": "/staff",
+          "icon": "Users",
+          "enabled": true,
+          "role": "owner",
+          "organizationId": "2",
+          "createdAt": "2023-03-25T00:00:00.000Z",
+          "updatedAt": "2023-03-25T00:00:00.000Z"
+        },
+        {
+          "id": "owner-payroll-2",
+          "name": "Payroll",
+          "href": "/payroll",
+          "icon": "DollarSign",
+          "enabled": true,
+          "role": "owner",
+          "organizationId": "2",
+          "createdAt": "2023-03-25T00:00:00.000Z",
+          "updatedAt": "2023-03-25T00:00:00.000Z"
+        },
+        {
+          "id": "owner-scheduling-2",
+          "name": "Scheduling",
+          "href": "/scheduling",
+          "icon": "Calendar",
+          "enabled": true,
+          "role": "owner",
+          "organizationId": "2",
+          "createdAt": "2023-03-25T00:00:00.000Z",
+          "updatedAt": "2023-03-25T00:00:00.000Z"
+        },
+        {
+          "id": "owner-suppliers-2",
+          "name": "Suppliers",
+          "href": "/suppliers",
+          "icon": "Truck",
+          "enabled": true,
+          "role": "owner",
+          "organizationId": "2",
+          "createdAt": "2023-03-25T00:00:00.000Z",
+          "updatedAt": "2023-03-25T00:00:00.000Z"
+        },
+        {
+          "id": "owner-marketplace-2",
+          "name": "Marketplace",
+          "href": "/marketplace",
+          "icon": "Store",
+          "enabled": true,
+          "role": "owner",
+          "organizationId": "2",
+          "createdAt": "2023-03-25T00:00:00.000Z",
+          "updatedAt": "2023-03-25T00:00:00.000Z"
+        },
+        {
+          "id": "owner-procurement-2",
+          "name": "Procurement",
+          "href": "/procurement",
+          "icon": "ShoppingBag",
+          "enabled": true,
+          "role": "owner",
+          "organizationId": "2",
+          "createdAt": "2023-03-25T00:00:00.000Z",
+          "updatedAt": "2023-03-25T00:00:00.000Z"
+        },
+        {
+          "id": "owner-settings-2",
+          "name": "Settings",
+          "href": "/settings",
+          "icon": "Settings",
+          "enabled": true,
+          "role": "owner",
+          "organizationId": "2",
+          "createdAt": "2023-03-25T00:00:00.000Z",
+          "updatedAt": "2023-03-25T00:00:00.000Z"
+        }
+      ],
+      "cashierPermissions": [
+        {
+          "id": "cashier-pos-2",
+          "name": "POS",
+          "href": "/pos",
+          "icon": "ShoppingCart",
+          "enabled": true,
+          "role": "cashier",
+          "organizationId": "2",
+          "createdAt": "2023-03-25T00:00:00.000Z",
+          "updatedAt": "2023-03-25T00:00:00.000Z"
+        },
+        {
+          "id": "cashier-kds-2",
+          "name": "KDS",
+          "href": "/kds",
+          "icon": "Monitor",
+          "enabled": true,
+          "role": "cashier",
+          "organizationId": "2",
+          "createdAt": "2023-03-25T00:00:00.000Z",
+          "updatedAt": "2023-03-25T00:00:00.000Z"
+        },
+        {
+          "id": "cashier-timeclock-2",
+          "name": "Time Clock",
+          "href": "/timeclock",
+          "icon": "Clock",
+          "enabled": true,
+          "role": "cashier",
+          "organizationId": "2",
+          "createdAt": "2023-03-25T00:00:00.000Z",
+          "updatedAt": "2023-03-25T00:00:00.000Z"
+        },
+        {
+          "id": "cashier-reports-2",
+          "name": "My Sales",
+          "href": "/reports",
+          "icon": "BarChart3",
+          "enabled": true,
+          "role": "cashier",
+          "organizationId": "2",
+          "createdAt": "2023-03-25T00:00:00.000Z",
+          "updatedAt": "2023-03-25T00:00:00.000Z"
+        },
+        {
+          "id": "cashier-transactions-2",
+          "name": "Transactions",
+          "href": "/transactions",
+          "icon": "Receipt",
+          "enabled": true,
+          "role": "cashier",
+          "organizationId": "2",
+          "createdAt": "2023-03-25T00:00:00.000Z",
+          "updatedAt": "2023-03-25T00:00:00.000Z"
+        }
+      ],
+      "createdAt": "2023-03-25T00:00:00.000Z",
+      "updatedAt": "2023-03-25T00:00:00.000Z"
+    }
+  ],
+  "constants": {
+    "roleColors": {
+      "superuser": "bg-purple-500",
+      "owner": "bg-blue-500",
+      "admin": "bg-green-500",
+      "cashier": "bg-orange-500"
+    },
+    "roleDescriptions": {
+      "superuser": "Platform-level access to all organizations, billing, and global metrics",
+      "owner": "Organization-wide control with multi-location management and full reporting",
+      "admin": "Location-level management with inventory control and staff supervision",
+      "cashier": "POS interface with lite reporting and kitchen display operations"
+    },
+    "organizationNames": {
+      "1": "Brew & Bean Coffee Co.",
+      "2": "Morning Grind Coffee"
+    },
+    "locationNames": {
+      "1": "Downtown Location",
+      "2": "Mall Location",
+      "3": "Main Street",
+      "4": "Riverside"
+    }
+  }
+}

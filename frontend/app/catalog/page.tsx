@@ -1,8 +1,8 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useAppStore } from "@/lib/store"
-import { getProducts } from "@/lib/services"
+import { useProductsStore } from "@/lib/stores/products-store"
 import type { Product } from "@/lib/types"
 import { ProductList } from "@/components/catalog/product-list"
 import { ProductForm } from "@/components/catalog/product-form"
@@ -12,9 +12,13 @@ import { Lock } from "lucide-react"
 
 export default function CatalogPage() {
   const { currentUser } = useAppStore()
-  const products = getProducts(currentUser)
+  const { products, loading, loadProducts } = useProductsStore()
   const [editingProduct, setEditingProduct] = useState<Product | null>(null)
   const [showForm, setShowForm] = useState(false)
+
+  useEffect(() => {
+    loadProducts(currentUser)
+  }, [currentUser, loadProducts])
 
   const hasAccess = currentUser?.role === "owner" || currentUser?.role === "admin"
 
@@ -54,7 +58,12 @@ export default function CatalogPage() {
 
   const handleSave = (productData: Omit<Product, "id"> & { id?: string }) => {
     // In a real app, this would save to the backend
-    console.log("Saving product:", productData)
+    const productWithTenantInfo = {
+      ...productData,
+      organizationId: currentUser?.organizationId || "",
+      locationId: currentUser?.locationId || "",
+    }
+    console.log("Saving product:", productWithTenantInfo)
     setShowForm(false)
     setEditingProduct(null)
   }
@@ -69,6 +78,31 @@ export default function CatalogPage() {
   const handleCancel = () => {
     setShowForm(false)
     setEditingProduct(null)
+  }
+
+  if (loading) {
+    return (
+      <div className="p-6">
+        <div className="mb-6">
+          <h1 className="text-2xl font-semibold">Product Catalog</h1>
+          <p className="text-muted-foreground">Loading products...</p>
+        </div>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {[...Array(6)].map((_, i) => (
+            <Card key={i} className="animate-pulse">
+              <CardHeader>
+                <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+              </CardHeader>
+              <CardContent>
+                <div className="h-3 bg-gray-200 rounded w-full mb-2"></div>
+                <div className="h-3 bg-gray-200 rounded w-2/3"></div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    )
   }
 
   if (showForm) {

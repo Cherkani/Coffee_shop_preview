@@ -1,11 +1,13 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { useAppStore } from "@/lib/store"
 import { getProducts, getOrders, getTransactions, getInventoryItems } from "@/lib/services"
 import { LocationSelector } from "@/components/location-selector"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { MapPin, Users, ShoppingCart, DollarSign } from "lucide-react"
+import type { Product, Order, Transaction, InventoryItem } from "@/lib/types"
 
 export function OwnerDashboard() {
   const { 
@@ -14,14 +16,71 @@ export function OwnerDashboard() {
     setSelectedLocations
   } = useAppStore()
 
+  const [products, setProducts] = useState<Product[]>([])
+  const [orders, setOrders] = useState<Order[]>([])
+  const [transactions, setTransactions] = useState<Transaction[]>([])
+  const [inventory, setInventory] = useState<InventoryItem[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const loadData = async () => {
+      if (!currentUser || currentUser.role !== "owner") return
+
+      try {
+        setLoading(true)
+        const [productsData, ordersData, transactionsData, inventoryData] = await Promise.all([
+          getProducts(currentUser, selectedLocations),
+          getOrders(currentUser, selectedLocations),
+          getTransactions(currentUser, selectedLocations),
+          getInventoryItems(currentUser, selectedLocations)
+        ])
+
+        setProducts(productsData)
+        setOrders(ordersData)
+        setTransactions(transactionsData)
+        setInventory(inventoryData)
+      } catch (error) {
+        console.error("Failed to load dashboard data:", error)
+        setProducts([])
+        setOrders([])
+        setTransactions([])
+        setInventory([])
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadData()
+  }, [currentUser, selectedLocations])
+
   if (!currentUser || currentUser.role !== "owner") {
     return null
   }
 
-  const products = getProducts(currentUser, selectedLocations)
-  const orders = getOrders(currentUser, selectedLocations)
-  const transactions = getTransactions(currentUser, selectedLocations)
-  const inventory = getInventoryItems(currentUser, selectedLocations)
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-2xl font-bold">Dashboard</h2>
+            <p className="text-muted-foreground">Loading dashboard data...</p>
+          </div>
+        </div>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {[...Array(4)].map((_, i) => (
+            <Card key={i}>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Loading...</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">...</div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    )
+  }
 
   const totalRevenue = transactions.reduce((sum, t) => sum + t.amount, 0)
   const totalOrders = orders.length

@@ -1,70 +1,32 @@
-// Sample billing transactions data
-export const SAMPLE_BILLING_TRANSACTIONS = [
-  {
-    id: "1",
-    org: "Brew & Bean Coffee Co.",
-    amount: 299,
-    plan: "Pro",
-    status: "paid" as const,
-    date: "2024-01-22",
-  },
-  {
-    id: "2",
-    org: "Morning Grind Coffee",
-    amount: 99,
-    plan: "Basic",
-    status: "paid" as const,
-    date: "2024-01-22",
-  },
-  {
-    id: "3",
-    org: "Coffee Corner",
-    amount: 599,
-    plan: "Enterprise",
-    status: "overdue" as const,
-    date: "2024-01-20",
-  },
-  {
-    id: "4",
-    org: "Artisan Roasters",
-    amount: 299,
-    plan: "Pro",
-    status: "paid" as const,
-    date: "2024-01-21",
-  },
-  {
-    id: "5",
-    org: "Morning Grind Coffee",
-    amount: 99,
-    plan: "Basic",
-    status: "pending" as const,
-    date: "2024-01-22",
-  },
-] as const
+import { ApiService } from "../services/api-service"
 
-// Subscription plan breakdown for platform overview
-export const SUBSCRIPTION_PLAN_BREAKDOWN = [
-  { plan: "Basic Plan", count: 45, label: "orgs" },
-  { plan: "Pro Plan", count: 28, label: "orgs" },
-  { plan: "Enterprise", count: 12, label: "orgs" },
-] as const
+// Fetch billing data from JSON server
+export const getSampleBillingTransactions = async () => {
+  try {
+    const billing = await ApiService.getBilling()
+    return billing
+  } catch (error) {
+    console.error("Failed to fetch billing data from API:", error)
+    return []
+  }
+}
 
-// System health metrics
-export const SYSTEM_HEALTH_METRICS = [
-  { name: "API Response Time", value: "98ms avg", progress: 85 },
-  { name: "Database Performance", value: "Excellent", progress: 95 },
-] as const
+// Fetch metrics from JSON server
+export const getMetrics = async () => {
+  try {
+    const metrics = await ApiService.getMetrics()
+    return metrics
+  } catch (error) {
+    console.error("Failed to fetch metrics from API:", error)
+    return {}
+  }
+}
 
-// Trial conversion metrics
-export const TRIAL_CONVERSION_METRICS = {
-  activeTrials: 23,
-  convertedThisMonth: 8,
-} as const
-
-// Peak hours data
-export const PEAK_HOURS_DATA = {
-  timeRange: "8-10 AM",
-  description: "Highest order volume",
-} as const
+// For backward compatibility, export functions that return the data
+export const SAMPLE_BILLING_TRANSACTIONS = getSampleBillingTransactions
+export const SUBSCRIPTION_PLAN_BREAKDOWN = getMetrics
+export const SYSTEM_HEALTH_METRICS = getMetrics
+export const TRIAL_CONVERSION_METRICS = getMetrics
+export const PEAK_HOURS_DATA = getMetrics
 
 export type TransactionStatus = "paid" | "pending" | "overdue"

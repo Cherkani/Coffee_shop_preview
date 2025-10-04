@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useAppStore } from "@/lib/store"
 import { getSuppliers } from "@/lib/services"
 import { Button } from "@/components/ui/button"
@@ -11,12 +11,31 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Plus, Search, Star, Phone, Mail, MapPin, Package } from "lucide-react"
 import type { Supplier } from "@/lib/types"
 
-
 export default function SuppliersPage() {
   const { currentUser } = useAppStore()
-  const [suppliers, setSuppliers] = useState<Supplier[]>(getSuppliers(currentUser))
+  const [suppliers, setSuppliers] = useState<Supplier[]>([])
+  const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
   const [categoryFilter, setCategoryFilter] = useState("all")
+
+  useEffect(() => {
+    const loadSuppliers = async () => {
+      if (!currentUser) return
+
+      try {
+        setLoading(true)
+        const suppliersData = await getSuppliers(currentUser)
+        setSuppliers(suppliersData)
+      } catch (error) {
+        console.error("Failed to load suppliers:", error)
+        setSuppliers([])
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadSuppliers()
+  }, [currentUser])
 
   // Access control
   if (!currentUser || currentUser.role !== "owner") {
@@ -27,6 +46,33 @@ export default function SuppliersPage() {
             <p className="text-center text-muted-foreground">Access denied. Only owners can manage suppliers.</p>
           </CardContent>
         </Card>
+      </div>
+    )
+  }
+
+  if (loading) {
+    return (
+      <div className="p-6 space-y-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold">Suppliers</h1>
+            <p className="text-muted-foreground">Loading suppliers...</p>
+          </div>
+        </div>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {[...Array(6)].map((_, i) => (
+            <Card key={i} className="animate-pulse">
+              <CardHeader>
+                <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+              </CardHeader>
+              <CardContent>
+                <div className="h-3 bg-gray-200 rounded w-full mb-2"></div>
+                <div className="h-3 bg-gray-200 rounded w-2/3"></div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       </div>
     )
   }

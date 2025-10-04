@@ -1,5 +1,6 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { useAppStore } from "@/lib/store"
 import { getProducts } from "@/lib/services"
 import type { Product } from "@/lib/types"
@@ -14,7 +15,37 @@ interface ProductGridProps {
 
 export function ProductGrid({ onProductSelect, selectedCategory }: ProductGridProps) {
   const { currentUser } = useAppStore()
-  const products = getProducts(currentUser)
+  const [products, setProducts] = useState<Product[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const loadProducts = async () => {
+      try {
+        setLoading(true)
+        const fetchedProducts = await getProducts(currentUser)
+        setProducts(fetchedProducts)
+        
+        // Debug logging
+        console.log("POS ProductGrid Debug:")
+        console.log("- Current User:", currentUser)
+        console.log("- Products from service:", fetchedProducts)
+        console.log("- Products length:", fetchedProducts.length)
+      } catch (error) {
+        console.error("Failed to load products:", error)
+        setProducts([])
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    if (currentUser) {
+      loadProducts()
+    }
+  }, [currentUser])
+
+  if (loading) {
+    return <div className="p-4 text-center">Loading products...</div>
+  }
 
   const filteredProducts = selectedCategory ? products.filter((p) => p.category === selectedCategory) : products
 

@@ -1,44 +1,17 @@
 import type { DashboardMetrics } from "../types"
+import { ApiService } from "../services/api-service"
 
-export const mockDashboardMetrics: Record<string, DashboardMetrics> = {
-  superuser: {
-    totalOrganizations: 4,
-    totalLocations: 11,
-    totalUsers: 19,
-    monthlyRevenue: 42500,
-    activeSubscriptions: 4,
-    revenueGrowth: 12.5,
-    userGrowth: 8.3,
-    systemHealth: 98,
-    pendingIssues: 2,
-  },
-  owner: {
-    totalLocations: 4,
-    totalStaff: 6,
-    monthlyRevenue: 15750,
-    dailyRevenue: 525,
-    ordersToday: 127,
-    averageOrderValue: 8.45,
-    topSellingProduct: "Cappuccino",
-    revenueGrowth: 8.2,
-    customerSatisfaction: 4.7,
-  },
-  admin: {
-    dailyRevenue: 1250,
-    ordersToday: 89,
-    averageOrderValue: 7.85,
-    staffOnDuty: 3,
-    inventoryAlerts: 2,
-    customerSatisfaction: 4.6,
-    topSellingProduct: "Latte",
-    peakHour: "9:00 AM",
-  },
-  cashier: {
-    ordersProcessed: 23,
-    totalSales: 195.5,
-    averageOrderValue: 8.5,
-    ordersInQueue: 3,
-    currentShiftStart: "8:00 AM",
-    hoursWorked: 4.5,
-  },
+// Fetch dashboard metrics from JSON server
+export const getMockDashboardMetrics = async (): Promise<Record<string, DashboardMetrics>> => {
+  try {
+    const metrics = await ApiService.getMetrics()
+    return metrics
+  } catch (error) {
+    console.error("Failed to fetch dashboard metrics from API:", error)
+    // Fallback to empty object if API fails
+    return {}
+  }
 }
+
+// For backward compatibility, export a function that returns the data
+export const mockDashboardMetrics = getMockDashboardMetrics

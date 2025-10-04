@@ -24,6 +24,9 @@ import {
   getMarketplaceListings,
   getProduction,
   getUsers,
+  addProduct as addProductService,
+  updateProduct as updateProductService,
+  deleteProduct as deleteProductService,
 } from "./services"
 
 interface AppState {
@@ -37,6 +40,7 @@ interface AppState {
   selectedLocations: string[] // For owners to filter by multiple locations
 
   // Actions
+  initializeData: () => Promise<void>
   setCurrentUser: (user: User) => void
   setCurrentOrganization: (org: Organization) => void
   setCurrentLocation: (location: Location) => void
@@ -45,6 +49,11 @@ interface AppState {
   signIn: (user: User) => void
   updateNavigationPermission: (permissionId: string, enabled: boolean) => void
   setNavigationSettings: (settings: OrganizationNavigationSettings) => void
+  
+  // Product management actions
+  addProduct: (product: Omit<Product, "id">) => void
+  updateProduct: (productId: string, updates: Partial<Product>) => void
+  deleteProduct: (productId: string) => void
 
   // Data getters
   getDashboardMetrics: () => any
@@ -64,8 +73,8 @@ export const useAppStore = create<AppState>((set, get) => ({
   currentUser: null,
   currentOrganization: null,
   currentLocation: null,
-  organizations: mockOrganizations,
-  locations: mockOrganizations.flatMap((org) => org.locations),
+  organizations: [],
+  locations: [],
   isAuthenticated: false,
   navigationSettings: null,
   selectedLocations: [],
@@ -74,6 +83,31 @@ export const useAppStore = create<AppState>((set, get) => ({
   setCurrentOrganization: (org) => set({ currentOrganization: org }),
   setCurrentLocation: (location) => set({ currentLocation: location }),
   setSelectedLocations: (locationIds) => set({ selectedLocations: locationIds }),
+
+  initializeData: async () => {
+    try {
+      console.log("Initializing store data...")
+      const [organizations, navigationSettings] = await Promise.all([
+        mockOrganizations(),
+        mockNavigationSettings()
+      ])
+      
+      const locations = organizations.flatMap((org) => org.locations)
+      
+      set({ 
+        organizations,
+        locations,
+        navigationSettings: navigationSettings[0] || null
+      })
+      
+      console.log("Store data initialized:", { 
+        organizations: organizations.length, 
+        locations: locations.length 
+      })
+    } catch (error) {
+      console.error("Failed to initialize store data:", error)
+    }
+  },
 
   signOut: () =>
     set({
@@ -84,9 +118,10 @@ export const useAppStore = create<AppState>((set, get) => ({
     }),
 
   signIn: (user) => {
-    const org = user.organizationId ? mockOrganizations.find((o) => o.id === user.organizationId) : null
+    const { organizations, navigationSettings } = get()
+    const org = user.organizationId ? organizations.find((o) => o.id === user.organizationId) : null
     const location = user.locationId && org ? org.locations.find((l) => l.id === user.locationId) : null
-    const navigationSettings = org ? mockNavigationSettings.find((s: OrganizationNavigationSettings) => s.organizationId === org.id) || getDefaultNavigationSettings(org.id) : null
+    const userNavigationSettings = org ? navigationSettings || getDefaultNavigationSettings(org.id) : null
 
     // Initialize selected locations for owners (all their locations)
     const initialSelectedLocations = user.role === "owner" && org 
@@ -98,7 +133,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       currentOrganization: org,
       currentLocation: location,
       isAuthenticated: true,
-      navigationSettings,
+      navigationSettings: userNavigationSettings,
       selectedLocations: initialSelectedLocations,
     })
   },
@@ -112,6 +147,60 @@ export const useAppStore = create<AppState>((set, get) => ({
   },
 
   setNavigationSettings: (settings) => set({ navigationSettings: settings }),
+
+  // Product management actions
+  addProduct: (productData) => {
+    const { currentUser } = get()
+    console.log("Store addProduct called:", productData)
+    console.log("Current user:", currentUser)
+    
+    if (!currentUser) {
+      console.log("No current user, cannot add product")
+      return
+    }
+
+    try {
+      const newProduct = addProductService(productData, currentUser)
+      console.log("Product added to mock data:", newProduct)
+      console.log("Product will be available on next page refresh")
+    } catch (error) {
+      console.error("Error adding product:", error)
+    }
+  },
+
+  updateProduct: (productId, updates) => {
+    const { currentUser } = get()
+    
+    if (!currentUser) {
+      console.log("No current user, cannot update product")
+      return
+    }
+
+    try {
+      const updatedProduct = updateProductService(productId, updates, currentUser)
+      console.log("Product updated in mock data:", updatedProduct)
+      console.log("Product will be available on next page refresh")
+    } catch (error) {
+      console.error("Error updating product:", error)
+    }
+  },
+
+  deleteProduct: (productId) => {
+    const { currentUser } = get()
+    
+    if (!currentUser) {
+      console.log("No current user, cannot delete product")
+      return
+    }
+
+    try {
+      const success = deleteProductService(productId, currentUser)
+      console.log("Product deleted from mock data:", success)
+      console.log("Product will be removed on next page refresh")
+    } catch (error) {
+      console.error("Error deleting product:", error)
+    }
+  },
 
   getDashboardMetrics: () => {
     const { currentUser } = get()
@@ -148,7 +237,13 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   getProducts: () => {
     const { currentUser, selectedLocations } = get()
-    return getProducts(currentUser, selectedLocations)
+    console.log("Store getProducts called:")
+    console.log("- Current user:", currentUser)
+    console.log("- Selected locations:", selectedLocations)
+    
+    // For now, return empty array - components should use the async service directly
+    console.log("- Returning empty array (use async service directly)")
+    return []
   },
 
   getOrders: () => {
