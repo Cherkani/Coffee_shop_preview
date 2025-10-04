@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useAppStore } from "@/lib/store"
+import { getProducts } from "@/lib/services"
 import type { Product } from "@/lib/types"
 import { ProductList } from "@/components/catalog/product-list"
 import { ProductForm } from "@/components/catalog/product-form"
@@ -10,7 +11,8 @@ import { Badge } from "@/components/ui/badge"
 import { Lock } from "lucide-react"
 
 export default function CatalogPage() {
-  const { products, currentUser } = useAppStore()
+  const { currentUser } = useAppStore()
+  const products = getProducts(currentUser)
   const [editingProduct, setEditingProduct] = useState<Product | null>(null)
   const [showForm, setShowForm] = useState(false)
 

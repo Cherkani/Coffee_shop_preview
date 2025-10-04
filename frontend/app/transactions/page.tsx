@@ -1,6 +1,7 @@
 "use client"
 
 import { useAppStore } from "@/lib/store"
+import { getTransactions } from "@/lib/services"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -8,67 +9,11 @@ import { Input } from "@/components/ui/input"
 import { Receipt, Search, Filter, Download, CreditCard, DollarSign } from "lucide-react"
 import { useState } from "react"
 
-const transactionData = [
-  {
-    id: "TXN-1001",
-    orderId: "1001",
-    customer: "Alice Johnson",
-    items: ["Cappuccino (Medium)"],
-    total: 5.6,
-    paymentMethod: "Credit Card",
-    cashier: "Mike Cashier",
-    timestamp: "2024-03-18 09:15 AM",
-    status: "completed",
-  },
-  {
-    id: "TXN-1002",
-    orderId: "1002",
-    customer: "Bob Smith",
-    items: ["Espresso (Double) x2", "Croissant"],
-    total: 10.25,
-    paymentMethod: "Cash",
-    cashier: "Mike Cashier",
-    timestamp: "2024-03-18 09:32 AM",
-    status: "completed",
-  },
-  {
-    id: "TXN-1003",
-    orderId: "1003",
-    customer: "Carol Davis",
-    items: ["Latte (Large)"],
-    total: 6.8,
-    paymentMethod: "Mobile Pay",
-    cashier: "Lisa Cashier",
-    timestamp: "2024-03-18 10:45 AM",
-    status: "completed",
-  },
-  {
-    id: "TXN-1004",
-    orderId: "1004",
-    customer: "Emma Wilson",
-    items: ["Frappuccino (Large)", "Chocolate Muffin"],
-    total: 11.4,
-    paymentMethod: "Credit Card",
-    cashier: "David Barista",
-    timestamp: "2024-03-18 11:20 AM",
-    status: "completed",
-  },
-  {
-    id: "TXN-1005",
-    orderId: "1005",
-    customer: "Frank Miller",
-    items: ["Avocado Toast", "Iced Coffee (Medium)"],
-    total: 13.85,
-    paymentMethod: "Debit Card",
-    cashier: "Mike Cashier",
-    timestamp: "2024-03-18 12:15 PM",
-    status: "refunded",
-  },
-]
 
 export default function TransactionsPage() {
   const { currentUser } = useAppStore()
   const [searchTerm, setSearchTerm] = useState("")
+  const transactions = getTransactions(currentUser)
 
   if (!currentUser) {
     return (
@@ -79,14 +24,14 @@ export default function TransactionsPage() {
   }
 
   const isAdmin = currentUser.role === "admin" || currentUser.role === "owner"
-  const filteredTransactions = transactionData.filter(
+  const filteredTransactions = transactions.filter(
     (transaction) =>
-      (isAdmin || transaction.cashier === currentUser.name) &&
-      (transaction.customer.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (isAdmin || transaction.cashierId === currentUser.id) &&
+      (transaction.customerName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         transaction.id.toLowerCase().includes(searchTerm.toLowerCase())),
   )
 
-  const totalRevenue = filteredTransactions.filter((t) => t.status === "completed").reduce((sum, t) => sum + t.total, 0)
+  const totalRevenue = filteredTransactions.filter((t) => t.status === "completed").reduce((sum, t) => sum + t.amount, 0)
 
   return (
     <div className="space-y-6">
@@ -174,15 +119,15 @@ export default function TransactionsPage() {
                   <div>
                     <div className="font-medium">{transaction.id}</div>
                     <div className="text-sm text-muted-foreground">
-                      {transaction.customer} • {transaction.timestamp}
+                      {transaction.customerName || "Guest"} • {transaction.createdAt.toLocaleString()}
                     </div>
-                    <div className="text-sm text-muted-foreground">{transaction.items.join(", ")}</div>
+                    <div className="text-sm text-muted-foreground">Order #{transaction.orderId}</div>
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="font-medium">${transaction.total.toFixed(2)}</div>
+                  <div className="font-medium">${transaction.amount.toFixed(2)}</div>
                   <div className="text-sm text-muted-foreground">{transaction.paymentMethod}</div>
-                  {isAdmin && <div className="text-sm text-muted-foreground">{transaction.cashier}</div>}
+                  {isAdmin && <div className="text-sm text-muted-foreground">Cashier ID: {transaction.cashierId}</div>}
                   <Badge variant={transaction.status === "completed" ? "default" : "destructive"}>
                     {transaction.status}
                   </Badge>

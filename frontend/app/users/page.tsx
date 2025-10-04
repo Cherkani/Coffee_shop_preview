@@ -5,7 +5,7 @@ import { PlatformUsersManagement } from "@/components/console/platform-users-man
 import { hasPermission } from "@/lib/permissions"
 
 export default function UsersPage() {
-  const { currentUser, users, organizations, getVisibleUsers } = useAppStore()
+  const { currentUser, organizations, getVisibleUsers } = useAppStore()
 
   if (!currentUser || !hasPermission(currentUser, "canViewAllUsers")) {
     return (

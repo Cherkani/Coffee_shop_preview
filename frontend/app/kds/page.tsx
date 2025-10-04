@@ -2,12 +2,19 @@
 
 import { useEffect, useState } from "react"
 import { useAppStore } from "@/lib/store"
+import { getOrders } from "@/lib/services"
 import { OrderBoard } from "@/components/kds/order-board"
 import { KDSHeader } from "@/components/kds/kds-header"
 
 export default function KDSPage() {
-  const { orders, updateOrderStatus, currentLocation } = useAppStore()
+  const { currentUser, currentLocation } = useAppStore()
+  const orders = getOrders(currentUser)
   const [refreshKey, setRefreshKey] = useState(0)
+
+  // Mock function for demo purposes
+  const updateOrderStatus = (orderId: string, status: any) => {
+    console.log("Updating order status:", orderId, status)
+  }
 
   // Auto-refresh every 30 seconds
   useEffect(() => {

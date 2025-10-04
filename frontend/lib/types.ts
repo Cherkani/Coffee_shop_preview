@@ -15,6 +15,7 @@ export interface Organization {
   id: string
   name: string
   ownerId: string
+  adminId?: string
   locations: Location[]
   subscriptionPlan: "basic" | "pro" | "enterprise"
   status: "active" | "suspended" | "trial"
@@ -220,6 +221,27 @@ export interface MarketplaceListing {
   createdAt: Date
   organizationId: string
   locationId: string
+}
+
+export interface NavigationPermission {
+  id: string
+  name: string
+  href: string
+  icon: string
+  enabled: boolean
+  role: UserRole
+  organizationId: string
+  createdAt: Date
+  updatedAt: Date
+}
+
+export interface OrganizationNavigationSettings {
+  id: string
+  organizationId: string
+  ownerPermissions: NavigationPermission[]
+  cashierPermissions: NavigationPermission[]
+  createdAt: Date
+  updatedAt: Date
 }
 
 export interface DashboardMetrics {

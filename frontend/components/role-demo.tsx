@@ -79,7 +79,8 @@ const rolePermissions = {
 }
 
 export function RoleDemo() {
-  const { currentUser, users, setCurrentUser } = useAppStore()
+  const { currentUser, setCurrentUser, getVisibleUsers } = useAppStore()
+  const users = getVisibleUsers()
 
   if (!currentUser) return null
 

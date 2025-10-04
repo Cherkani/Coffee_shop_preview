@@ -12,7 +12,8 @@ import { RefreshCw, Settings, Bell } from "lucide-react"
 import { hasPermission } from "@/lib/permissions"
 
 export default function ConsolePage() {
-  const { currentUser, organizations, users, getDashboardMetrics } = useAppStore()
+  const { currentUser, organizations, getDashboardMetrics, getVisibleUsers } = useAppStore()
+  const users = getVisibleUsers()
   const [refreshKey, setRefreshKey] = useState(0)
   const [activeTab, setActiveTab] = useState("overview")
 
@@ -54,7 +55,7 @@ export default function ConsolePage() {
 
   const enhancedOrganizations = organizations.map((org) => ({
     ...org,
-    owner: users.find((u) => u.id === org.ownerId),
+    owner: users.find((u) => u.id === org.ownerId) || users[0], // Fallback to first user if owner not found
     totalUsers: users.filter((u) => u.organizationId === org.id).length,
     monthlyRevenue: org.monthlyRevenue || 0,
   }))

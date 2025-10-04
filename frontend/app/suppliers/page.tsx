@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useAppStore } from "@/lib/store"
+import { getSuppliers } from "@/lib/services"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -10,61 +11,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Plus, Search, Star, Phone, Mail, MapPin, Package } from "lucide-react"
 import type { Supplier } from "@/lib/types"
 
-// Mock suppliers data
-const mockSuppliers: Supplier[] = [
-  {
-    id: "1",
-    name: "Premium Coffee Co.",
-    contactEmail: "orders@premiumcoffee.com",
-    contactPhone: "+1 (555) 123-4567",
-    address: "123 Coffee Street, Seattle, WA 98101",
-    categories: ["Coffee Beans", "Tea", "Equipment"],
-    rating: 4.8,
-    isActive: true,
-    paymentTerms: "Net 30",
-    deliveryTime: "2-3 business days",
-  },
-  {
-    id: "2",
-    name: "Dairy Fresh Supply",
-    contactEmail: "supply@dairyfresh.com",
-    contactPhone: "+1 (555) 234-5678",
-    address: "456 Dairy Lane, Portland, OR 97201",
-    categories: ["Dairy", "Alternative Milk"],
-    rating: 4.6,
-    isActive: true,
-    paymentTerms: "Net 15",
-    deliveryTime: "1-2 business days",
-  },
-  {
-    id: "3",
-    name: "Local Bakery Wholesale",
-    contactEmail: "wholesale@localbakery.com",
-    contactPhone: "+1 (555) 345-6789",
-    address: "789 Bakery Ave, San Francisco, CA 94102",
-    categories: ["Pastries", "Bread", "Desserts"],
-    rating: 4.9,
-    isActive: true,
-    paymentTerms: "Net 7",
-    deliveryTime: "Same day",
-  },
-  {
-    id: "4",
-    name: "Supply Pro Equipment",
-    contactEmail: "sales@supplypro.com",
-    contactPhone: "+1 (555) 456-7890",
-    address: "321 Supply Road, Los Angeles, CA 90210",
-    categories: ["Cups", "Lids", "Napkins", "Equipment"],
-    rating: 4.4,
-    isActive: false,
-    paymentTerms: "Net 30",
-    deliveryTime: "3-5 business days",
-  },
-]
 
 export default function SuppliersPage() {
   const { currentUser } = useAppStore()
-  const [suppliers, setSuppliers] = useState<Supplier[]>(mockSuppliers)
+  const [suppliers, setSuppliers] = useState<Supplier[]>(getSuppliers(currentUser))
   const [searchTerm, setSearchTerm] = useState("")
   const [categoryFilter, setCategoryFilter] = useState("all")
 

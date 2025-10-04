@@ -9,59 +9,11 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Plus, Search, Calendar, DollarSign, Package, CheckCircle } from "lucide-react"
 import type { Production } from "@/lib/types"
-
-// Mock production data
-const mockProductions: Production[] = [
-  {
-    id: "1",
-    itemName: "Colombian Coffee Beans",
-    category: "Coffee Beans",
-    quantityProduced: 50,
-    unit: "lbs",
-    costPerUnit: 12.0,
-    totalCost: 600.0,
-    productionDate: new Date("2024-01-20"),
-    expiryDate: new Date("2024-07-20"),
-    locationId: "loc2",
-    producedBy: "Maria Rodriguez",
-    status: "completed",
-    notes: "Premium single-origin beans, medium roast",
-  },
-  {
-    id: "2",
-    itemName: "Vanilla Syrup",
-    category: "Syrups",
-    quantityProduced: 24,
-    unit: "bottles",
-    costPerUnit: 4.5,
-    totalCost: 108.0,
-    productionDate: new Date("2024-01-18"),
-    expiryDate: new Date("2024-04-18"),
-    locationId: "loc3",
-    producedBy: "David Kim",
-    status: "ready-for-sale",
-    notes: "Made with real vanilla beans",
-  },
-  {
-    id: "3",
-    itemName: "Croissants",
-    category: "Pastries",
-    quantityProduced: 120,
-    unit: "count",
-    costPerUnit: 0.85,
-    totalCost: 102.0,
-    productionDate: new Date("2024-01-22"),
-    expiryDate: new Date("2024-01-24"),
-    locationId: "loc4",
-    producedBy: "Sophie Chen",
-    status: "in-progress",
-    notes: "Fresh daily batch",
-  },
-]
+import { getProduction } from "@/lib/services"
 
 export default function ProductionPage() {
   const { currentUser } = useAppStore()
-  const [productions, setProductions] = useState<Production[]>(mockProductions)
+  const [productions, setProductions] = useState<Production[]>(getProduction(currentUser))
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
 

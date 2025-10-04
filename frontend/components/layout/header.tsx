@@ -1,6 +1,7 @@
 "use client"
 
 import { useAppStore } from "@/lib/store"
+import { getAllUsers } from "@/lib/services"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -21,8 +22,11 @@ const roleColors = {
 }
 
 export function Header() {
-  const { currentUser, currentOrganization, currentLocation, organizations, users, setCurrentUser, signOut } =
+  const { currentUser, currentOrganization, currentLocation, organizations, setCurrentUser, signOut } =
     useAppStore()
+  
+  // Get all users for role switching
+  const users = getAllUsers()
 
   if (!currentUser) return null
 

@@ -1,6 +1,7 @@
 "use client"
 
 import { useAppStore } from "@/lib/store"
+import { getProducts } from "@/lib/services"
 import type { Product } from "@/lib/types"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -12,7 +13,8 @@ interface ProductGridProps {
 }
 
 export function ProductGrid({ onProductSelect, selectedCategory }: ProductGridProps) {
-  const { products } = useAppStore()
+  const { currentUser } = useAppStore()
+  const products = getProducts(currentUser)
 
   const filteredProducts = selectedCategory ? products.filter((p) => p.category === selectedCategory) : products
 

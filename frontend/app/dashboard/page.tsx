@@ -1,6 +1,7 @@
 "use client"
 
 import { useAppStore } from "@/lib/store"
+import { OwnerDashboard } from "@/components/dashboard/owner-dashboard"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -216,7 +217,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {currentUser.role === "owner" ? renderOwnerDashboard() : renderAdminDashboard()}
+      {currentUser.role === "owner" ? <OwnerDashboard /> : renderAdminDashboard()}
     </div>
   )
 }

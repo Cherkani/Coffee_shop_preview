@@ -9,69 +9,6 @@ export const MODIFIER_CATEGORIES = ["Coffee", "Milk", "Syrup", "Preparation", "O
 export type ProductCategory = (typeof PRODUCT_CATEGORIES)[number]
 export type ModifierCategory = (typeof MODIFIER_CATEGORIES)[number]
 
-// Sample billing transactions data
-export const SAMPLE_BILLING_TRANSACTIONS = [
-  {
-    id: "1",
-    org: "Brew & Bean Coffee Co.",
-    amount: 299,
-    plan: "Pro",
-    status: "paid" as const,
-    date: "2024-01-22",
-  },
-  {
-    id: "2",
-    org: "Morning Grind Coffee",
-    amount: 99,
-    plan: "Basic",
-    status: "paid" as const,
-    date: "2024-01-22",
-  },
-  {
-    id: "3",
-    org: "Coffee Corner",
-    amount: 599,
-    plan: "Enterprise",
-    status: "overdue" as const,
-    date: "2024-01-20",
-  },
-  {
-    id: "4",
-    org: "Artisan Roasters",
-    amount: 299,
-    plan: "Pro",
-    status: "paid" as const,
-    date: "2024-01-21",
-  },
-  {
-    id: "5",
-    org: "Morning Grind Coffee",
-    amount: 99,
-    plan: "Basic",
-    status: "pending" as const,
-    date: "2024-01-22",
-  },
-] as const
-
-// Subscription plan breakdown for platform overview
-export const SUBSCRIPTION_PLAN_BREAKDOWN = [
-  { plan: "Basic Plan", count: 45, label: "orgs" },
-  { plan: "Pro Plan", count: 28, label: "orgs" },
-  { plan: "Enterprise", count: 12, label: "orgs" },
-] as const
-
-// System health metrics
-export const SYSTEM_HEALTH_METRICS = [
-  { name: "API Response Time", value: "98ms avg", progress: 85 },
-  { name: "Database Performance", value: "Excellent", progress: 95 },
-] as const
-
-// Trial conversion metrics
-export const TRIAL_CONVERSION_METRICS = {
-  activeTrials: 23,
-  convertedThisMonth: 8,
-} as const
-
 // Payment issue types
 export const PAYMENT_ISSUE_TYPES = [
   { type: "Overdue Payments", icon: AlertTriangle, color: "text-red-600", bgColor: "bg-red-50 dark:bg-red-950/20" },
@@ -82,12 +19,6 @@ export const PAYMENT_ISSUE_TYPES = [
     bgColor: "bg-yellow-50 dark:bg-yellow-950/20",
   },
 ] as const
-
-// Peak hours data
-export const PEAK_HOURS_DATA = {
-  timeRange: "8-10 AM",
-  description: "Highest order volume",
-} as const
 
 // Platform overview metrics configuration
 export const PLATFORM_METRICS_CONFIG = [
@@ -182,4 +113,3 @@ export const SALES_METRICS_CONFIG = [
   },
 ] as const
 
-export type TransactionStatus = "paid" | "pending" | "overdue"

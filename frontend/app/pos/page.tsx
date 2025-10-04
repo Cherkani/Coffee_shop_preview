@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useAppStore } from "@/lib/store"
+import { getOrders } from "@/lib/services"
 import type { Product, OrderItem, Order } from "@/lib/types"
 import { ProductGrid } from "@/components/pos/product-grid"
 import { ModifierDrawer } from "@/components/pos/modifier-drawer"
@@ -10,10 +11,18 @@ import { OrderStatus } from "@/components/pos/order-status"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 export default function POSPage() {
-  const { currentUser, currentLocation, addOrder, updateOrderStatus, orders } = useAppStore()
+  const { currentUser, currentLocation } = useAppStore()
+  
+  // Get orders using service function
+  const orders = getOrders(currentUser)
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
   const [cartItems, setCartItems] = useState<OrderItem[]>([])
   const [isModifierDrawerOpen, setIsModifierDrawerOpen] = useState(false)
+
+  // Mock function for demo purposes
+  const updateOrderStatus = (orderId: string, status: Order["status"]) => {
+    console.log("Updating order status:", orderId, status)
+  }
 
   const handleProductSelect = (product: Product) => {
     setSelectedProduct(product)
@@ -65,9 +74,11 @@ export default function POSPage() {
       createdAt: new Date(),
       locationId: currentLocation?.id || "",
       cashierId: currentUser?.id || "",
+      organizationId: currentUser?.organizationId || "",
     }
 
-    addOrder(newOrder)
+    // For demo purposes, we'll just log the order
+    console.log("New order created:", newOrder)
     setCartItems([])
   }
 

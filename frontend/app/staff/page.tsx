@@ -11,7 +11,8 @@ import { Badge } from "@/components/ui/badge"
 import { Lock } from "lucide-react"
 
 export default function StaffPage() {
-  const { users, locations, currentUser } = useAppStore()
+  const { getVisibleUsers, locations, currentUser } = useAppStore()
+  const users = getVisibleUsers()
   const [showInviteForm, setShowInviteForm] = useState(false)
   const [editingUser, setEditingUser] = useState<User | null>(null)
 

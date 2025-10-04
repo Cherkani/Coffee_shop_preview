@@ -7,7 +7,8 @@ import { OrganizationManagement } from "@/components/console/organization-manage
 import { hasPermission } from "@/lib/permissions"
 
 export default function OrganizationsPage() {
-  const { currentUser, organizations, users, getVisibleOrganizations: getVisibleOrgs } = useAppStore()
+  const { currentUser, organizations, getVisibleOrganizations: getVisibleOrgs, getVisibleUsers } = useAppStore()
+  const users = getVisibleUsers()
   const router = useRouter()
 
   useEffect(() => {

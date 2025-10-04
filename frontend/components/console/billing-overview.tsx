@@ -5,12 +5,8 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import { TrendingUp, Download, CreditCard } from "lucide-react"
-import {
-  BILLING_METRICS_CONFIG,
-  SAMPLE_BILLING_TRANSACTIONS,
-  TRIAL_CONVERSION_METRICS,
-  PAYMENT_ISSUE_TYPES,
-} from "@/lib/constants"
+import { BILLING_METRICS_CONFIG, PAYMENT_ISSUE_TYPES } from "@/lib/constants"
+import { SAMPLE_BILLING_TRANSACTIONS, TRIAL_CONVERSION_METRICS } from "@/lib/mock-data"
 
 interface BillingData {
   totalMRR: number

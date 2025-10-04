@@ -4,7 +4,8 @@ import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { TrendingUp, TrendingDown, Clock } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { SALES_METRICS_CONFIG, PEAK_HOURS_DATA } from "@/lib/constants"
+import { SALES_METRICS_CONFIG } from "@/lib/constants"
+import { PEAK_HOURS_DATA } from "@/lib/mock-data"
 
 interface SalesData {
   totalRevenue: number

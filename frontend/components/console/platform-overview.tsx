@@ -5,7 +5,8 @@ import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { TrendingUp, TrendingDown, AlertTriangle } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { PLATFORM_METRICS_CONFIG, SUBSCRIPTION_PLAN_BREAKDOWN, SYSTEM_HEALTH_METRICS } from "@/lib/constants"
+import { PLATFORM_METRICS_CONFIG } from "@/lib/constants"
+import { SUBSCRIPTION_PLAN_BREAKDOWN, SYSTEM_HEALTH_METRICS } from "@/lib/mock-data"
 
 interface PlatformMetrics {
   totalOrganizations: number

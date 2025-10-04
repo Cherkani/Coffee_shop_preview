@@ -1,6 +1,7 @@
 "use client"
 
 import { useAppStore } from "@/lib/store"
+import { getOrders, getProducts } from "@/lib/services"
 import { SalesOverview } from "@/components/reports/sales-overview"
 import { TopItems } from "@/components/reports/top-items"
 import { SalesChart } from "@/components/reports/sales-chart"
@@ -13,7 +14,9 @@ import { Calendar, Download, Filter } from "lucide-react"
 import { useMemo } from "react"
 
 export default function ReportsPage() {
-  const { currentUser, orders, products } = useAppStore()
+  const { currentUser } = useAppStore()
+  const orders = getOrders(currentUser)
+  const products = getProducts(currentUser)
 
   // Calculate sales data from orders
   const salesData = useMemo(() => {
