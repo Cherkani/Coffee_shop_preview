@@ -119,15 +119,18 @@ export default function ProductManagementPage() {
       if (editingProduct) {
         // Update existing product
         console.log("Updating product:", editingProduct.id)
-        await updateProduct(editingProduct.id, productData)
+        await updateProduct(editingProduct.id, productData, currentUser)
       } else {
         // Add new product
         console.log("Adding new product")
         await addProduct(productData, currentUser)
       }
       
-      // Refresh the products list
-      await refreshProducts()
+      // Refresh lists in both stores: product-management and catalog consumers
+      await Promise.all([
+        refreshProducts(currentUser),
+        loadProducts(currentUser)
+      ])
       
       setShowForm(false)
       setEditingProduct(null)
@@ -141,8 +144,11 @@ export default function ProductManagementPage() {
       try {
         await deleteProduct(productId, currentUser)
         
-        // Refresh the products list
-        await refreshProducts()
+        // Refresh the products list for all consumers
+        await Promise.all([
+          refreshProducts(currentUser),
+          loadProducts(currentUser)
+        ])
       } catch (error) {
         console.error("Failed to delete product:", error)
       }

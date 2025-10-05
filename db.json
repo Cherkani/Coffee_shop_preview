@@ -417,6 +417,24 @@
       "modifiers": [],
       "organizationId": "1",
       "locationId": ""
+    },
+    {
+      "id": "product-1759678239623-8zyracfwu",
+      "name": "test1",
+      "category": "Sandwich",
+      "basePrice": 30,
+      "available": true,
+      "image": "aa",
+      "sizes": [
+        {
+          "id": "1759678239622",
+          "name": "small",
+          "price": 30
+        }
+      ],
+      "modifiers": [],
+      "organizationId": "2",
+      "locationId": ""
     }
   ],
   "orders": [
@@ -727,6 +745,33 @@
           "at": "2025-10-05T15:18:16.182Z"
         }
       ]
+    },
+    {
+      "id": "1759678332636",
+      "items": [
+        {
+          "productId": "product-1759678239623-8zyracfwu",
+          "productName": "test1",
+          "sizeId": "1759678239622",
+          "sizeName": "small",
+          "price": 30,
+          "modifiers": [],
+          "quantity": 1,
+          "id": "1759678331128j02t3j2rp"
+        }
+      ],
+      "total": 30,
+      "status": "queued",
+      "createdAt": "2025-10-05T15:32:12.636Z",
+      "locationId": "",
+      "cashierId": "7",
+      "organizationId": "2",
+      "statusHistory": [
+        {
+          "status": "queued",
+          "at": "2025-10-05T15:32:12.636Z"
+        }
+      ]
     }
   ],
   "transactions": [
@@ -793,8 +838,14 @@
       "contactPhone": "+1-555-0123",
       "address": "123 Coffee Farm Rd, Colombia",
       "category": "Coffee Beans",
+      "categories": [
+        "Coffee Beans"
+      ],
       "rating": 4.8,
       "isActive": true,
+      "paymentTerms": "Net 30",
+      "deliveryTime": "3-5 days",
+      "organizationId": "1",
       "products": [
         {
           "id": "p1",
@@ -821,8 +872,14 @@
       "contactPhone": "+1-555-0456",
       "address": "456 Farm Valley, Wisconsin",
       "category": "Dairy Products",
+      "categories": [
+        "Dairy Products"
+      ],
       "rating": 4.6,
       "isActive": true,
+      "paymentTerms": "Net 15",
+      "deliveryTime": "1-2 days",
+      "organizationId": "1",
       "products": [
         {
           "id": "p3",
@@ -841,6 +898,130 @@
           "minOrderQty": 5
         }
       ]
+    },
+    {
+      "id": "sup3",
+      "name": "Morning Bakery Supplies",
+      "contactEmail": "orders@morningbakery.com",
+      "contactPhone": "+1-555-0789",
+      "address": "12 Baker St, City Center",
+      "category": "Pastry Ingredients",
+      "categories": [
+        "Pastry Ingredients",
+        "Baking",
+        "Dairy"
+      ],
+      "rating": 4.7,
+      "isActive": true,
+      "paymentTerms": "Net 30",
+      "deliveryTime": "2-4 days",
+      "organizationId": "2",
+      "products": [
+        {
+          "id": "p5",
+          "name": "Butter (European Style)",
+          "category": "Dairy",
+          "unitPrice": 6.2,
+          "unit": "lb",
+          "minOrderQty": 10
+        },
+        {
+          "id": "p6",
+          "name": "All-Purpose Flour",
+          "category": "Baking",
+          "unitPrice": 0.9,
+          "unit": "lb",
+          "minOrderQty": 50
+        }
+      ]
+    },
+    {
+      "id": "sup4",
+      "name": "Cup & Lid Packaging Co.",
+      "contactEmail": "sales@cuplidco.com",
+      "contactPhone": "+1-555-0912",
+      "address": "78 Industrial Park, Riverside",
+      "category": "Packaging",
+      "categories": [
+        "Packaging"
+      ],
+      "rating": 4.5,
+      "isActive": true,
+      "paymentTerms": "Prepaid",
+      "deliveryTime": "5-7 days",
+      "organizationId": "2",
+      "products": [
+        {
+          "id": "p7",
+          "name": "12oz Paper Cups (500 pack)",
+          "category": "Packaging",
+          "unitPrice": 48,
+          "unit": "pack",
+          "minOrderQty": 1
+        },
+        {
+          "id": "p8",
+          "name": "Plastic Lids 12oz (500 pack)",
+          "category": "Packaging",
+          "unitPrice": 32,
+          "unit": "pack",
+          "minOrderQty": 1
+        }
+      ]
+    }
+  ],
+  "purchaseOrders": [
+    {
+      "id": "po-2001",
+      "orderNumber": "PO-2001",
+      "supplierId": "sup3",
+      "supplierName": "Morning Bakery Supplies",
+      "buyerLocationId": "3",
+      "items": [
+        {
+          "id": "poi-1",
+          "itemName": "All-Purpose Flour",
+          "quantity": 100,
+          "unitPrice": 0.9,
+          "totalPrice": 90,
+          "unit": "lb"
+        }
+      ],
+      "totalAmount": 90,
+      "status": "sent",
+      "orderDate": "2025-10-01T09:00:00.000Z",
+      "expectedDelivery": "2025-10-05T00:00:00.000Z",
+      "notes": "Weekly baking supplies"
+    },
+    {
+      "id": "po-2002",
+      "orderNumber": "PO-2002",
+      "supplierId": "sup4",
+      "supplierName": "Cup & Lid Packaging Co.",
+      "buyerLocationId": "3",
+      "items": [
+        {
+          "id": "poi-2",
+          "itemName": "12oz Paper Cups (500 pack)",
+          "quantity": 2,
+          "unitPrice": 48,
+          "totalPrice": 96,
+          "unit": "pack"
+        },
+        {
+          "id": "poi-3",
+          "itemName": "Plastic Lids 12oz (500 pack)",
+          "quantity": 2,
+          "unitPrice": 32,
+          "totalPrice": 64,
+          "unit": "pack"
+        }
+      ],
+      "totalAmount": 160,
+      "status": "confirmed",
+      "orderDate": "2025-10-03T12:00:00.000Z",
+      "expectedDelivery": "2025-10-09T00:00:00.000Z",
+      "notes": "Restock cups and lids"
     }
   ],
   "marketplace": [
@@ -910,6 +1091,64 @@
       "expiryDate": "2024-01-24T00:00:00.000Z",
       "isActive": true,
       "createdAt": "2024-01-22T00:00:00.000Z"
+    },
+    {
+      "id": "4",
+      "name": "TestProduct Bulk",
+      "category": "Tea",
+      "description": "Bulk pack for testing flows",
+      "unit": "units",
+      "pricePerUnit": 5,
+      "availableQuantity": 100,
+      "minOrderQuantity": 10,
+      "sellerId": "8",
+      "sellerName": "Admin Morning Grind",
+      "sellerLocationId": "3",
+      "sellerLocationName": "Main Street",
+      "quality": "Standard",
+      "certifications": [],
+      "productionDate": "2024-01-20T00:00:00.000Z",
+      "expiryDate": "2025-01-20T00:00:00.000Z",
+      "isActive": true,
+      "createdAt": "2024-01-21T00:00:00.000Z"
+    },
+    {
+      "id": "1759679219390",
+      "name": "yyy",
+      "category": "Coffee Beans",
+      "description": "ssss",
+      "unit": "lbs",
+      "pricePerUnit": 0,
+      "availableQuantity": 0,
+      "minOrderQuantity": 1,
+      "sellerId": "2",
+      "sellerName": "John Owner",
+      "sellerLocationId": "",
+      "sellerLocationName": "",
+      "quality": "Standard",
+      "certifications": [],
+      "productionDate": "2025-10-05T15:46:59.390Z",
+      "isActive": false,
+      "createdAt": "2025-10-05T15:46:59.390Z"
+    },
+    {
+      "id": "1759679382735",
+      "name": "asdf",
+      "category": "Coffee Beans",
+      "description": "",
+      "unit": "lbs",
+      "pricePerUnit": 0,
+      "availableQuantity": 0,
+      "minOrderQuantity": 1,
+      "sellerId": "2",
+      "sellerName": "John Owner",
+      "sellerLocationId": "",
+      "sellerLocationName": "",
+      "quality": "Standard",
+      "certifications": [],
+      "productionDate": "2025-10-05T15:49:42.735Z",
+      "isActive": true,
+      "createdAt": "2025-10-05T15:49:42.735Z"
     }
   ],
   "production": [

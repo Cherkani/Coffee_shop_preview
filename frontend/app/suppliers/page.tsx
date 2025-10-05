@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { useAppStore } from "@/lib/services/store-service"
 import { getSuppliers } from "@/lib/services"
+import { getInventoryItems } from "@/lib/services"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -15,6 +16,7 @@ export default function SuppliersPage() {
   const { currentUser } = useAppStore()
   const [suppliers, setSuppliers] = useState<Supplier[]>([])
   const [loading, setLoading] = useState(true)
+  const [inventory, setInventory] = useState<any[]>([])
   const [searchTerm, setSearchTerm] = useState("")
   const [categoryFilter, setCategoryFilter] = useState("all")
 
@@ -24,8 +26,12 @@ export default function SuppliersPage() {
 
       try {
         setLoading(true)
-        const suppliersData = await getSuppliers(currentUser)
+        const [suppliersData, inventoryData] = await Promise.all([
+          getSuppliers(currentUser),
+          getInventoryItems(currentUser),
+        ])
         setSuppliers(suppliersData)
+        setInventory(inventoryData)
       } catch (error) {
         console.error("Failed to load suppliers:", error)
         setSuppliers([])
@@ -80,12 +86,20 @@ export default function SuppliersPage() {
   const filteredSuppliers = suppliers.filter((supplier) => {
     const matchesSearch =
       supplier.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      supplier.categories.some((cat) => cat.toLowerCase().includes(searchTerm.toLowerCase()))
+      supplier.categories?.some((cat) => cat.toLowerCase().includes(searchTerm.toLowerCase()))
     const matchesCategory = categoryFilter === "all" || supplier.categories.includes(categoryFilter)
     return matchesSearch && matchesCategory
   })
 
-  const allCategories = Array.from(new Set(suppliers.flatMap((s) => s.categories)))
+  const allCategories = Array.from(new Set((suppliers.flatMap((s) => s.categories || []))))
+
+  const getDaysUntilReorder = (supplierName: string) => {
+    const itemsFromSupplier = inventory.filter((it) => it.supplier === supplierName)
+    if (itemsFromSupplier.length === 0) return null
+    // Very simple heuristic: when currentStock <= minStock, show "Reorder now"
+    const critical = itemsFromSupplier.filter((it) => it.currentStock <= it.minStock)
+    return critical.length > 0 ? 0 : null
+  }
 
   return (
     <div className="p-6 space-y-6">
@@ -181,6 +195,12 @@ export default function SuppliersPage() {
                   <span className="text-muted-foreground">Delivery:</span>
                   <p className="font-medium">{supplier.deliveryTime}</p>
                 </div>
+                {getDaysUntilReorder(supplier.name) !== null && (
+                  <div className="col-span-2">
+                    <span className="text-muted-foreground">Reorder:</span>
+                    <p className="font-medium text-amber-600">Reorder now based on low stock</p>
+                  </div>
+                )}
               </div>
 
               <div className="flex gap-2">

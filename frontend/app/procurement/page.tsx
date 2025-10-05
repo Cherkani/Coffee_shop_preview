@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react"
 import { useAppStore } from "@/lib/services/store-service"
+import ApiService from "@/lib/services/api-service"
+import { getInventoryItems } from "@/lib/services"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -10,7 +12,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Plus, Search, DollarSign, Truck, Package } from "lucide-react"
 import type { PurchaseOrder } from "@/lib/types"
 
-// For now, procurement pulls from API in future; using empty list
 const initialPurchaseOrders: PurchaseOrder[] = []
 
 export default function ProcurementPage() {
@@ -18,6 +19,24 @@ export default function ProcurementPage() {
   const [orders, setOrders] = useState<PurchaseOrder[]>(initialPurchaseOrders)
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
+  const [inventory, setInventory] = useState<any[]>([])
+
+  useEffect(() => {
+    const load = async () => {
+      if (!currentUser) return
+      try {
+        const [poData, inv] = await Promise.all([
+          ApiService.request<any>("/purchaseOrders") as any,
+          getInventoryItems(currentUser),
+        ])
+        setOrders(Array.isArray(poData) ? poData : [])
+        setInventory(Array.isArray(inv) ? inv : [])
+      } catch (e) {
+        setOrders([])
+      }
+    }
+    load()
+  }, [currentUser])
 
   // Access control
   if (!currentUser || !["owner", "admin"].includes(currentUser.role)) {
@@ -61,8 +80,16 @@ export default function ProcurementPage() {
     }
   }
 
-  const totalSpent = orders.filter((o) => o.status === "delivered").reduce((sum, o) => sum + o.totalAmount, 0)
+  const totalSpent = orders.filter((o: any) => o.status === "delivered").reduce((sum: number, o: any) => sum + o.totalAmount, 0)
   const pendingOrders = orders.filter((o) => ["sent", "confirmed", "shipped"].includes(o.status)).length
+
+  // Current month stock tracker (items last restocked this month)
+  const now = new Date()
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1)
+  const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 1)
+  const inMonthStockUnits = inventory
+    .filter((it) => it.lastRestocked && new Date(it.lastRestocked) >= monthStart && new Date(it.lastRestocked) < monthEnd)
+    .reduce((sum, it) => sum + (it.currentStock || 0), 0)
 
   return (
     <div className="p-6 space-y-6">
@@ -86,6 +113,16 @@ export default function ProcurementPage() {
           <CardContent>
             <div className="text-2xl font-bold">${totalSpent.toFixed(2)}</div>
             <p className="text-xs text-muted-foreground">This month</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">In Stock (this month)</CardTitle>
+            <Package className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{inMonthStockUnits}</div>
+            <p className="text-xs text-muted-foreground">Units restocked this month</p>
           </CardContent>
         </Card>
         <Card>
@@ -152,11 +189,11 @@ export default function ProcurementPage() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <span className="text-sm text-muted-foreground">Order Date</span>
-                  <p className="font-medium">{order.orderDate.toLocaleDateString()}</p>
+                  <p className="font-medium">{new Date((order as any).orderDate).toLocaleDateString()}</p>
                 </div>
                 <div>
                   <span className="text-sm text-muted-foreground">Expected Delivery</span>
-                  <p className="font-medium">{order.expectedDelivery?.toLocaleDateString() || "TBD"}</p>
+                  <p className="font-medium">{order.expectedDelivery ? new Date((order as any).expectedDelivery).toLocaleDateString() : "TBD"}</p>
                 </div>
                 <div>
                   <span className="text-sm text-muted-foreground">Total Amount</span>
@@ -167,17 +204,27 @@ export default function ProcurementPage() {
               <div>
                 <span className="text-sm font-medium mb-2 block">Items ({order.items.length})</span>
                 <div className="space-y-2">
-                  {order.items.map((item) => (
-                    <div key={item.id} className="flex justify-between items-center p-2 bg-muted rounded">
-                      <div>
-                        <span className="font-medium">{item.itemName}</span>
-                        <span className="text-muted-foreground ml-2">
-                          {item.quantity} {item.unit} × ${item.unitPrice}
-                        </span>
+                  {order.items.map((item) => {
+                    const invItem = inventory.find((it) => it.name === item.itemName)
+                    return (
+                      <div key={item.id} className="p-2 bg-muted rounded">
+                        <div className="flex justify-between items-center">
+                          <div>
+                            <span className="font-medium">{item.itemName}</span>
+                            <span className="text-muted-foreground ml-2">
+                              {item.quantity} {item.unit} × ${item.unitPrice}
+                            </span>
+                          </div>
+                          <span className="font-medium">${item.totalPrice.toFixed(2)}</span>
+                        </div>
+                        {invItem && (
+                          <div className="text-xs text-muted-foreground mt-1">
+                            In stock: <span className="font-medium">{invItem.currentStock}</span> (min {invItem.minStock})
+                          </div>
+                        )}
                       </div>
-                      <span className="font-medium">${item.totalPrice.toFixed(2)}</span>
-                    </div>
-                  ))}
+                    )
+                  })}
                 </div>
               </div>
 

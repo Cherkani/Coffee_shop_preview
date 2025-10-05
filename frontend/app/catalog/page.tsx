@@ -69,6 +69,7 @@ export default function CatalogPage() {
           locationId: currentUser.locationId || "",
         }, currentUser)
       }
+      // Ensure all product views refresh after save
       await loadProducts(currentUser)
     } catch (e) {
       console.error("Failed to save product:", e)
