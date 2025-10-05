@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { useAppStore } from "@/lib/services/store-service"
 import { useProductsStore } from "@/lib/stores/products-store"
+import { addProduct as addProductService, updateProduct as updateProductService, deleteProduct as deleteProductService } from "@/lib/services"
 import type { Product } from "@/lib/types"
 import { ProductList } from "@/components/catalog/product-list"
 import { ProductForm } from "@/components/catalog/product-form"
@@ -56,22 +57,36 @@ export default function CatalogPage() {
     setShowForm(true)
   }
 
-  const handleSave = (productData: Omit<Product, "id"> & { id?: string }) => {
-    // In a real app, this would save to the backend
-    const productWithTenantInfo = {
-      ...productData,
-      organizationId: currentUser?.organizationId || "",
-      locationId: currentUser?.locationId || "",
+  const handleSave = async (productData: Omit<Product, "id"> & { id?: string }) => {
+    if (!currentUser) return
+    try {
+      if (editingProduct && productData.id) {
+        await updateProductService(productData.id, productData, currentUser)
+      } else {
+        await addProductService({
+          ...productData,
+          organizationId: currentUser.organizationId || "",
+          locationId: currentUser.locationId || "",
+        }, currentUser)
+      }
+      await loadProducts(currentUser)
+    } catch (e) {
+      console.error("Failed to save product:", e)
+    } finally {
+      setShowForm(false)
+      setEditingProduct(null)
     }
-    console.log("Saving product:", productWithTenantInfo)
-    setShowForm(false)
-    setEditingProduct(null)
   }
 
-  const handleDelete = (productId: string) => {
+  const handleDelete = async (productId: string) => {
+    if (!currentUser) return
     if (confirm("Are you sure you want to delete this product?")) {
-      // In a real app, this would delete from the backend
-      console.log("Deleting product:", productId)
+      try {
+        await deleteProductService(productId, currentUser)
+        await loadProducts(currentUser)
+      } catch (e) {
+        console.error("Failed to delete product:", e)
+      }
     }
   }
 

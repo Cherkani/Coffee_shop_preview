@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useAppStore } from "@/lib/services/store-service"
-import { getTransactions } from "@/lib/services"
+import { getTransactions, getOrders } from "@/lib/services"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -11,10 +11,11 @@ import { Receipt, Search, Filter, Download, CreditCard, DollarSign } from "lucid
 import type { Transaction } from "@/lib/types"
 
 export default function TransactionsPage() {
-  const { currentUser } = useAppStore()
+  const { currentUser, currentLocation } = useAppStore()
   const [searchTerm, setSearchTerm] = useState("")
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [loading, setLoading] = useState(true)
+  const [orders, setOrders] = useState<any[]>([])
 
   useEffect(() => {
     const loadTransactions = async () => {
@@ -22,8 +23,12 @@ export default function TransactionsPage() {
 
       try {
         setLoading(true)
-        const transactionsData = await getTransactions(currentUser)
+        const [transactionsData, ordersData] = await Promise.all([
+          getTransactions(currentUser),
+          getOrders(currentUser),
+        ])
         setTransactions(transactionsData)
+        setOrders(ordersData)
       } catch (error) {
         console.error("Failed to load transactions:", error)
         setTransactions([])
@@ -71,14 +76,63 @@ export default function TransactionsPage() {
   }
 
   const isAdmin = currentUser.role === "admin" || currentUser.role === "owner"
-  const filteredTransactions = transactions.filter(
+  const isCashier = currentUser.role === "cashier"
+  // Scoped by role
+  const scopedTransactions = transactions.filter(
+    (transaction) => isAdmin || transaction.cashierId === currentUser.id,
+  )
+
+  // Build cashier "POS History" equivalent (today's paid orders for current location)
+
+  // Build cashier "POS History" equivalent (today's paid orders for current location)
+  const paidTodayOrders = (() => {
+    const now = new Date()
+    const start = new Date(now)
+    start.setHours(0, 0, 0, 0)
+    const end = new Date(start)
+    end.setDate(end.getDate() + 1)
+    const locationOrders = orders.filter((o) => o.locationId === currentLocation?.id)
+    return locationOrders
+      .filter((o) => o.status === "paid")
+      .filter((o) => {
+        const d = new Date((o as any).createdAt)
+        return d >= start && d < end
+      })
+      .sort((a, b) => new Date((b as any).createdAt).getTime() - new Date((a as any).createdAt).getTime())
+  })()
+
+  // Data source: for cashiers, mirror POS History; for admin/owner, show transactions
+  const dataRows = isCashier
+    ? paidTodayOrders.map((o) => ({
+        id: o.id,
+        customerName: o.customerName,
+        createdAt: o.createdAt,
+        orderId: o.id,
+        amount: o.total,
+        paymentMethod: "unknown",
+        status: "completed",
+        cashierId: o.cashierId,
+      }))
+    : scopedTransactions
+
+  // Search on chosen data rows
+  const filteredTransactions = dataRows.filter(
     (transaction) =>
-      (isAdmin || transaction.cashierId === currentUser.id) &&
       (transaction.customerName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         transaction.id.toLowerCase().includes(searchTerm.toLowerCase())),
   )
 
-  const totalRevenue = filteredTransactions.filter((t) => t.status === "completed").reduce((sum, t) => sum + t.amount, 0)
+  // Now build sorted
+  const sortedTransactions = [...filteredTransactions].sort((a, b) => {
+    const da = new Date((a as any).createdAt).getTime()
+    const db = new Date((b as any).createdAt).getTime()
+    return db - da
+  })
+
+  // Summary metrics reflect selected data source
+  const totalRevenue = dataRows
+    .filter((t) => t.status === "completed")
+    .reduce((sum, t) => sum + t.amount, 0)
 
   return (
     <div className="space-y-6">
@@ -119,8 +173,8 @@ export default function TransactionsPage() {
             <Receipt className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{filteredTransactions.length}</div>
-            <p className="text-xs text-muted-foreground">Today</p>
+            <div className="text-2xl font-bold">{dataRows.length}</div>
+            <p className="text-xs text-muted-foreground">{isCashier ? "Today" : "All time"}</p>
           </CardContent>
         </Card>
         <Card>
@@ -129,9 +183,7 @@ export default function TransactionsPage() {
             <CreditCard className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              ${filteredTransactions.length > 0 ? (totalRevenue / filteredTransactions.length).toFixed(2) : "0.00"}
-            </div>
+            <div className="text-2xl font-bold">${dataRows.length > 0 ? (totalRevenue / dataRows.length).toFixed(2) : "0.00"}</div>
             <p className="text-xs text-muted-foreground">Per transaction</p>
           </CardContent>
         </Card>
@@ -157,7 +209,7 @@ export default function TransactionsPage() {
           </div>
 
           <div className="space-y-4">
-            {filteredTransactions.map((transaction) => (
+            {sortedTransactions.map((transaction) => (
               <div key={transaction.id} className="flex items-center justify-between p-4 border rounded-lg">
                 <div className="flex items-center gap-4">
                   <div className="flex items-center justify-center w-10 h-10 bg-secondary rounded-full">
@@ -165,9 +217,7 @@ export default function TransactionsPage() {
                   </div>
                   <div>
                     <div className="font-medium">{transaction.id}</div>
-                    <div className="text-sm text-muted-foreground">
-                      {transaction.customerName || "Guest"} • {transaction.createdAt.toLocaleString()}
-                    </div>
+                    <div className="text-sm text-muted-foreground">{transaction.customerName || "Guest"} • {new Date((transaction as any).createdAt).toISOString()}</div>
                     <div className="text-sm text-muted-foreground">Order #{transaction.orderId}</div>
                   </div>
                 </div>

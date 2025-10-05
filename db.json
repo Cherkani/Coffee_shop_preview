@@ -402,7 +402,7 @@
     },
     {
       "id": "product-1759675393129-j8b6g7y0i",
-      "name": "llllllq",
+      "name": "TestProduct",
       "category": "Tea",
       "basePrice": 3330,
       "available": true,
@@ -438,6 +438,295 @@
       "locationId": "1",
       "cashierId": "4",
       "createdAt": "2023-12-01T10:30:00.000Z"
+    },
+    {
+      "id": "1759676864462",
+      "items": [
+        {
+          "productId": "1-1-1",
+          "productName": "Espresso",
+          "sizeId": "1759675313208",
+          "sizeName": "smallll",
+          "price": 10,
+          "modifiers": [],
+          "quantity": 1,
+          "id": "17596768617277ow3easnh"
+        }
+      ],
+      "total": 10,
+      "status": "paid",
+      "createdAt": "2025-10-05T15:07:44.462Z",
+      "locationId": "1",
+      "cashierId": "4",
+      "organizationId": "1",
+      "statusHistory": [
+        {
+          "status": "in-progress",
+          "at": "2025-10-05T15:07:46.603Z"
+        },
+        {
+          "status": "ready",
+          "at": "2025-10-05T15:07:47.749Z"
+        },
+        {
+          "status": "paid",
+          "at": "2025-10-05T15:07:48.719Z"
+        }
+      ]
+    },
+    {
+      "id": "1759676908394",
+      "items": [
+        {
+          "productId": "product-1759675393129-j8b6g7y0i",
+          "productName": "TestProduct",
+          "sizeId": "1759675382520",
+          "sizeName": "nedium",
+          "price": 305,
+          "modifiers": [],
+          "quantity": 61,
+          "id": "1759676907128xps1wl829"
+        }
+      ],
+      "total": 305,
+      "status": "paid",
+      "createdAt": "2025-10-05T15:08:28.394Z",
+      "locationId": "1",
+      "cashierId": "4",
+      "organizationId": "1",
+      "statusHistory": [
+        {
+          "status": "in-progress",
+          "at": "2025-10-05T15:08:31.778Z"
+        },
+        {
+          "status": "ready",
+          "at": "2025-10-05T15:08:32.311Z"
+        },
+        {
+          "status": "paid",
+          "at": "2025-10-05T15:08:33.040Z"
+        }
+      ]
+    },
+    {
+      "id": "1759677206603",
+      "items": [
+        {
+          "productId": "1-1-1",
+          "productName": "Espresso",
+          "sizeId": "s1",
+          "sizeName": "Single",
+          "price": 2.5,
+          "modifiers": [],
+          "quantity": 1,
+          "id": "1759677205394lo5wza4bk"
+        }
+      ],
+      "total": 2.5,
+      "status": "paid",
+      "createdAt": "2025-10-05T15:13:26.603Z",
+      "locationId": "1",
+      "cashierId": "4",
+      "organizationId": "1",
+      "statusHistory": [
+        {
+          "status": "queued",
+          "at": "2025-10-05T15:13:26.603Z"
+        },
+        {
+          "status": "in-progress",
+          "at": "2025-10-05T15:13:28.719Z"
+        },
+        {
+          "status": "ready",
+          "at": "2025-10-05T15:13:29.221Z"
+        },
+        {
+          "status": "paid",
+          "at": "2025-10-05T15:13:30.120Z"
+        }
+      ]
+    },
+    {
+      "id": "1759677299633",
+      "items": [
+        {
+          "productId": "1-1-1",
+          "productName": "Espresso",
+          "sizeId": "s1",
+          "sizeName": "Single",
+          "price": 2.5,
+          "modifiers": [],
+          "quantity": 1,
+          "id": "1759677296961qddsnzj1r"
+        }
+      ],
+      "total": 2.5,
+      "status": "paid",
+      "createdAt": "2025-10-05T15:14:59.633Z",
+      "locationId": "1",
+      "cashierId": "4",
+      "organizationId": "1",
+      "statusHistory": [
+        {
+          "status": "queued",
+          "at": "2025-10-05T15:14:59.633Z"
+        },
+        {
+          "status": "in-progress",
+          "at": "2025-10-05T15:15:05.528Z"
+        },
+        {
+          "status": "ready",
+          "at": "2025-10-05T15:15:06.170Z"
+        },
+        {
+          "status": "paid",
+          "at": "2025-10-05T15:15:06.736Z"
+        }
+      ]
+    },
+    {
+      "id": "1759677341877",
+      "items": [
+        {
+          "productId": "1-1-2",
+          "productName": "Cappuccino",
+          "sizeId": "s3",
+          "sizeName": "Small",
+          "price": 4.9,
+          "modifiers": [
+            {
+              "id": "m5",
+              "name": "Almond Milk",
+              "price": 0.65,
+              "category": "Milk"
+            }
+          ],
+          "quantity": 1,
+          "id": "1759677336923aevpuwgg8"
+        },
+        {
+          "productId": "1-1-2",
+          "productName": "Cappuccino",
+          "sizeId": "s3",
+          "sizeName": "Small",
+          "price": 4.25,
+          "modifiers": [],
+          "quantity": 1,
+          "id": "1759677341031ze2q5s73o"
+        }
+      ],
+      "total": 9.15,
+      "status": "paid",
+      "createdAt": "2025-10-05T15:15:41.877Z",
+      "locationId": "1",
+      "cashierId": "4",
+      "organizationId": "1",
+      "statusHistory": [
+        {
+          "status": "queued",
+          "at": "2025-10-05T15:15:41.877Z"
+        },
+        {
+          "status": "in-progress",
+          "at": "2025-10-05T15:15:43.881Z"
+        },
+        {
+          "status": "ready",
+          "at": "2025-10-05T15:15:44.784Z"
+        },
+        {
+          "status": "paid",
+          "at": "2025-10-05T15:15:45.498Z"
+        }
+      ]
+    },
+    {
+      "id": "1759677394582",
+      "items": [
+        {
+          "productId": "2-3-1",
+          "productName": "House Blend",
+          "sizeId": "s9",
+          "sizeName": "Small",
+          "price": 3.25,
+          "modifiers": [],
+          "quantity": 1,
+          "id": "1759677392816xgbhuydbl"
+        }
+      ],
+      "total": 3.25,
+      "status": "paid",
+      "createdAt": "2025-10-05T15:16:34.582Z",
+      "locationId": "3",
+      "cashierId": "9",
+      "organizationId": "2",
+      "statusHistory": [
+        {
+          "status": "queued",
+          "at": "2025-10-05T15:16:34.582Z"
+        },
+        {
+          "status": "in-progress",
+          "at": "2025-10-05T15:16:36.673Z"
+        },
+        {
+          "status": "ready",
+          "at": "2025-10-05T15:16:37.282Z"
+        },
+        {
+          "status": "paid",
+          "at": "2025-10-05T15:16:38.561Z"
+        }
+      ]
+    },
+    {
+      "id": "1759677493002",
+      "items": [
+        {
+          "productId": "1-2-1",
+          "productName": "Latte",
+          "sizeId": "s7",
+          "sizeName": "Medium",
+          "price": 11.9,
+          "modifiers": [
+            {
+              "id": "m8",
+              "name": "Vanilla Syrup",
+              "price": 0.5,
+              "category": "Syrup"
+            }
+          ],
+          "quantity": 2,
+          "id": "1759677489732714l6lru8"
+        }
+      ],
+      "total": 11.9,
+      "status": "paid",
+      "createdAt": "2025-10-05T15:18:13.002Z",
+      "locationId": "2",
+      "cashierId": "6",
+      "organizationId": "1",
+      "statusHistory": [
+        {
+          "status": "queued",
+          "at": "2025-10-05T15:18:13.002Z"
+        },
+        {
+          "status": "in-progress",
+          "at": "2025-10-05T15:18:15.256Z"
+        },
+        {
+          "status": "ready",
+          "at": "2025-10-05T15:18:15.424Z"
+        },
+        {
+          "status": "paid",
+          "at": "2025-10-05T15:18:16.182Z"
+        }
+      ]
     }
   ],
   "transactions": [

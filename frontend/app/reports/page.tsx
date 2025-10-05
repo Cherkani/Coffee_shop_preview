@@ -18,6 +18,7 @@ export default function ReportsPage() {
   const [orders, setOrders] = useState<any[]>([])
   const [products, setProducts] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [period, setPeriod] = useState<"day" | "week" | "month">("day")
 
   useEffect(() => {
     const load = async () => {
@@ -34,9 +35,36 @@ export default function ReportsPage() {
     load()
   }, [currentUser])
 
-  // Calculate sales data from orders
+  const isCashier = currentUser?.role === "cashier"
+
+  // Calculate sales data from orders (scoped per role; cashiers see only their own)
   const salesData = useMemo(() => {
-    const paidOrders = orders.filter((order) => order.status === "paid")
+    const scoped = isCashier && currentUser
+      ? orders.filter((o) => o.cashierId === currentUser.id)
+      : orders
+    // date window by period
+    const now = new Date()
+    const start = new Date(now)
+    start.setHours(0, 0, 0, 0)
+    if (period === "week") {
+      const day = start.getDay()
+      const diff = (day === 0 ? 6 : day - 1) // start from Monday
+      start.setDate(start.getDate() - diff)
+    }
+    if (period === "month") {
+      start.setDate(1)
+    }
+    const end = new Date(start)
+    if (period === "day") end.setDate(end.getDate() + 1)
+    if (period === "week") end.setDate(end.getDate() + 7)
+    if (period === "month") end.setMonth(end.getMonth() + 1)
+
+    const paidOrders = scoped
+      .filter((order) => order.status === "paid")
+      .filter((o) => {
+        const d = new Date(o.createdAt)
+        return d >= start && d < end
+      })
     const totalRevenue = paidOrders.reduce((sum, order) => sum + order.total, 0)
     const totalOrders = paidOrders.length
     const averageOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0
@@ -53,24 +81,105 @@ export default function ReportsPage() {
     }
   }, [orders])
 
-  // Mock data for charts and other components
-  const chartData = [
-    { name: "Mon", sales: 240, orders: 45 },
-    { name: "Tue", sales: 300, orders: 52 },
-    { name: "Wed", sales: 280, orders: 48 },
-    { name: "Thu", sales: 350, orders: 61 },
-    { name: "Fri", sales: 420, orders: 73 },
-    { name: "Sat", sales: 380, orders: 68 },
-    { name: "Sun", sales: 320, orders: 58 },
-  ]
+  // Build weekly chart data dynamically from paid orders (scoped per role)
+  const chartData = useMemo(() => {
+    const weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+    const init = weekDays.map((name) => ({ name, sales: 0, orders: 0 }))
 
-  const topItems = [
-    { id: "1", name: "Cappuccino", category: "Coffee", quantity: 45, revenue: 202.5, percentage: 100 },
-    { id: "2", name: "Espresso", category: "Coffee", quantity: 38, revenue: 133.0, percentage: 85 },
-    { id: "3", name: "Croissant", category: "Pastry", quantity: 22, revenue: 71.5, percentage: 49 },
-    { id: "4", name: "Latte", category: "Coffee", quantity: 31, revenue: 148.8, percentage: 69 },
-    { id: "5", name: "Americano", category: "Coffee", quantity: 28, revenue: 112.0, percentage: 62 },
-  ]
+    const scoped = isCashier && currentUser
+      ? orders.filter((o) => o.cashierId === currentUser.id)
+      : orders
+    // date window by period
+    const now = new Date()
+    const start = new Date(now)
+    start.setHours(0, 0, 0, 0)
+    if (period === "week") {
+      const day = start.getDay()
+      const diff = (day === 0 ? 6 : day - 1)
+      start.setDate(start.getDate() - diff)
+    }
+    if (period === "month") {
+      start.setDate(1)
+    }
+    const end = new Date(start)
+    if (period === "day") end.setDate(end.getDate() + 1)
+    if (period === "week") end.setDate(end.getDate() + 7)
+    if (period === "month") end.setMonth(end.getMonth() + 1)
+
+    const paid = scoped
+      .filter((o) => o.status === "paid")
+      .filter((o) => {
+        const d = new Date(o.createdAt)
+        return d >= start && d < end
+      })
+    paid.forEach((o) => {
+      const d = new Date(o.createdAt)
+      // getDay: 0=Sun..6=Sat; map to our Mon..Sun labels
+      const jsDay = d.getDay()
+      const idx = jsDay === 0 ? 6 : jsDay - 1
+      init[idx].sales += o.total
+      init[idx].orders += 1
+    })
+
+    return init
+  }, [orders, isCashier, currentUser, period])
+
+  // Compute top items from paid orders (by quantity and revenue), scoped per role
+  const topItems = useMemo(() => {
+    const scoped = isCashier && currentUser
+      ? orders.filter((o) => o.cashierId === currentUser.id)
+      : orders
+    // date window by period
+    const now = new Date()
+    const start = new Date(now)
+    start.setHours(0, 0, 0, 0)
+    if (period === "week") {
+      const day = start.getDay()
+      const diff = (day === 0 ? 6 : day - 1)
+      start.setDate(start.getDate() - diff)
+    }
+    if (period === "month") {
+      start.setDate(1)
+    }
+    const end = new Date(start)
+    if (period === "day") end.setDate(end.getDate() + 1)
+    if (period === "week") end.setDate(end.getDate() + 7)
+    if (period === "month") end.setMonth(end.getMonth() + 1)
+
+    const paid = scoped
+      .filter((o) => o.status === "paid")
+      .filter((o) => {
+        const d = new Date(o.createdAt)
+        return d >= start && d < end
+      })
+    const map: Record<string, { id: string; name: string; category: string; quantity: number; revenue: number }> = {}
+
+    paid.forEach((o) => {
+      o.items.forEach((it: any) => {
+        const key = it.productId || it.productName
+        if (!map[key]) {
+          map[key] = {
+            id: key,
+            name: it.productName,
+            category: it.category || "",
+            quantity: 0,
+            revenue: 0,
+          }
+        }
+        map[key].quantity += it.quantity || 1
+        map[key].revenue += it.price || 0
+      })
+    })
+
+    const list = Object.values(map)
+      .sort((a, b) => b.revenue - a.revenue)
+      .map((item, idx, arr) => ({
+        ...item,
+        percentage: arr.length ? Math.round((item.revenue / (arr[0].revenue || 1)) * 100) : 0,
+      }))
+
+    return list
+  }, [orders, isCashier, currentUser, period])
 
   const inventoryAlerts = [
     {
@@ -106,7 +215,6 @@ export default function ReportsPage() {
   }
 
   const isFullAccess = currentUser?.role === "owner" || currentUser?.role === "admin"
-  const isCashier = currentUser?.role === "cashier"
 
   return (
     <div className="p-6 space-y-6">
@@ -115,7 +223,7 @@ export default function ReportsPage() {
         <div>
           <h1 className="text-2xl font-semibold mb-2">Reports & Analytics</h1>
           <div className="flex items-center gap-2">
-            <Badge variant="outline">Today</Badge>
+            <Badge variant="outline">{period === "day" ? "Today" : period === "week" ? "This Week" : "This Month"}</Badge>
             {!isFullAccess && <Badge variant="secondary">Limited Access</Badge>}
           </div>
         </div>
@@ -124,6 +232,11 @@ export default function ReportsPage() {
             <Calendar className="h-4 w-4 mr-2" />
             Date Range
           </Button>
+          <div className="flex items-center bg-secondary rounded p-1">
+            <Button variant={period === "day" ? "default" : "ghost"} size="sm" onClick={() => setPeriod("day")}>Day</Button>
+            <Button variant={period === "week" ? "default" : "ghost"} size="sm" onClick={() => setPeriod("week")}>Week</Button>
+            <Button variant={period === "month" ? "default" : "ghost"} size="sm" onClick={() => setPeriod("month")}>Month</Button>
+          </div>
           <Button variant="outline" size="sm">
             <Filter className="h-4 w-4 mr-2" />
             Filter

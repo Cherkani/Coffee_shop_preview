@@ -35,7 +35,8 @@ export function OrderStatus({ orders, onUpdateStatus }: OrderStatusProps) {
       ) : (
         <div className="grid gap-3">
           {recentOrders.map((order) => {
-            const config = statusConfig[order.status]
+            const fallback = { label: order.status || "Unknown", color: "bg-gray-400", icon: Clock }
+            const config = (statusConfig as any)[order.status] || fallback
             const Icon = config.icon
 
             return (
@@ -61,6 +62,29 @@ export function OrderStatus({ orders, onUpdateStatus }: OrderStatusProps) {
                     </div>
                   ))}
                 </div>
+
+                {order.statusHistory && order.statusHistory.length > 0 && (
+                  <div className="text-xs text-muted-foreground mb-3">
+                    <div className="font-medium mb-1">Today History</div>
+                    {order.statusHistory
+                      .filter((h) => {
+                        const d = new Date((h as any).at)
+                        const now = new Date()
+                        return (
+                          d.getFullYear() === now.getFullYear() &&
+                          d.getMonth() === now.getMonth() &&
+                          d.getDate() === now.getDate()
+                        )
+                      })
+                      .map((h, idx) => (
+                        <div key={idx}>
+                          {new Date((h as any).at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}: {(
+                            h as any
+                          ).status}
+                        </div>
+                      ))}
+                  </div>
+                )}
 
                 <div className="flex gap-2">
                   {order.status === "queued" && (

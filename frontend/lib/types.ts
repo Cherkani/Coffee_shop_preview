@@ -77,6 +77,7 @@ export interface Order {
   locationId: string
   cashierId: string
   organizationId: string
+  statusHistory?: { status: "queued" | "in-progress" | "ready" | "paid"; at: Date }[]
 }
 
 export interface Ingredient {
