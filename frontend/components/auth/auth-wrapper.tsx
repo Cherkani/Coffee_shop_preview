@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useAppStore } from "@/lib/store"
+import { useAppStore } from "@/lib/services/store-service"
 import { useStoreInitialization } from "@/lib/hooks/use-store-initialization"
 import { LoginScreen } from "./login-screen"
 import { Header } from "@/components/layout/header"

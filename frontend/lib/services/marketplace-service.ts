@@ -1,68 +1,51 @@
 import type { MarketplaceItem, MarketplaceListing, User } from "../types"
-import { mockMarketplaceItems, mockMarketplaceListings } from "../mock-data"
+import ApiService from "./api-service"
+import { filterMarketplaceItemsByTenant } from "../multi-tenant-filtering"
 
 /**
  * Marketplace Service
  * Handles all marketplace-related data operations with multi-tenant filtering
  */
 
-export function getMarketplaceItems(user: User | null): MarketplaceItem[] {
-  if (!user || !user.organizationId) return []
-  
-  // Superuser can see all marketplace items
-  if (user.role === "superuser") return mockMarketplaceItems
-  
-  // Owner and admin can see marketplace items
-  if (user.role === "owner" || user.role === "admin") {
-    return mockMarketplaceItems
-  }
-  
-  // Cashiers cannot see marketplace
-  return []
+export async function getMarketplaceItems(user: User | null): Promise<MarketplaceItem[]> {
+  const items = await ApiService.getMarketplace()
+  return filterMarketplaceItemsByTenant(items, user)
 }
 
-export function getMarketplaceListings(user: User | null): MarketplaceListing[] {
-  if (!user || !user.organizationId) return []
-  
-  // Superuser can see all marketplace listings
-  if (user.role === "superuser") return mockMarketplaceListings
-  
-  // Owner and admin can see marketplace listings
-  if (user.role === "owner" || user.role === "admin") {
-    return mockMarketplaceListings
-  }
-  
-  // Cashiers cannot see marketplace
-  return []
+export async function getMarketplaceListings(user: User | null): Promise<MarketplaceListing[]> {
+  // If you later add marketplace listings endpoint, fetch here.
+  const items = await ApiService.getMarketplace()
+  // Map items to listings shape if needed; for now return empty list
+  return [] as MarketplaceListing[]
 }
 
-export function getMarketplaceItemById(itemId: string, user: User | null): MarketplaceItem | undefined {
-  const items = getMarketplaceItems(user)
+export async function getMarketplaceItemById(itemId: string, user: User | null): Promise<MarketplaceItem | undefined> {
+  const items = await getMarketplaceItems(user)
   return items.find(item => item.id === itemId)
 }
 
-export function getMarketplaceItemsByCategory(category: string, user: User | null): MarketplaceItem[] {
-  const items = getMarketplaceItems(user)
+export async function getMarketplaceItemsByCategory(category: string, user: User | null): Promise<MarketplaceItem[]> {
+  const items = await getMarketplaceItems(user)
   return items.filter(item => item.category === category)
 }
 
-export function getMarketplaceItemsByQuality(quality: MarketplaceItem["quality"], user: User | null): MarketplaceItem[] {
-  const items = getMarketplaceItems(user)
+export async function getMarketplaceItemsByQuality(quality: MarketplaceItem["quality"], user: User | null): Promise<MarketplaceItem[]> {
+  const items = await getMarketplaceItems(user)
   return items.filter(item => item.quality === quality)
 }
 
-export function getActiveMarketplaceItems(user: User | null): MarketplaceItem[] {
-  const items = getMarketplaceItems(user)
+export async function getActiveMarketplaceItems(user: User | null): Promise<MarketplaceItem[]> {
+  const items = await getMarketplaceItems(user)
   return items.filter(item => item.isActive)
 }
 
-export function getMarketplaceItemsBySeller(sellerId: string, user: User | null): MarketplaceItem[] {
-  const items = getMarketplaceItems(user)
+export async function getMarketplaceItemsBySeller(sellerId: string, user: User | null): Promise<MarketplaceItem[]> {
+  const items = await getMarketplaceItems(user)
   return items.filter(item => item.sellerId === sellerId)
 }
 
-export function searchMarketplaceItems(searchTerm: string, user: User | null): MarketplaceItem[] {
-  const items = getMarketplaceItems(user)
+export async function searchMarketplaceItems(searchTerm: string, user: User | null): Promise<MarketplaceItem[]> {
+  const items = await getMarketplaceItems(user)
   const term = searchTerm.toLowerCase()
   
   return items.filter(item => 
@@ -73,15 +56,15 @@ export function searchMarketplaceItems(searchTerm: string, user: User | null): M
   )
 }
 
-export function getMarketplaceItemsByPriceRange(minPrice: number, maxPrice: number, user: User | null): MarketplaceItem[] {
-  const items = getMarketplaceItems(user)
+export async function getMarketplaceItemsByPriceRange(minPrice: number, maxPrice: number, user: User | null): Promise<MarketplaceItem[]> {
+  const items = await getMarketplaceItems(user)
   return items.filter(item => 
     item.pricePerUnit >= minPrice && item.pricePerUnit <= maxPrice
   )
 }
 
-export function getExpiringMarketplaceItems(daysUntilExpiry: number, user: User | null): MarketplaceItem[] {
-  const items = getMarketplaceItems(user)
+export async function getExpiringMarketplaceItems(daysUntilExpiry: number, user: User | null): Promise<MarketplaceItem[]> {
+  const items = await getMarketplaceItems(user)
   const cutoffDate = new Date()
   cutoffDate.setDate(cutoffDate.getDate() + daysUntilExpiry)
   

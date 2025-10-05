@@ -1,5 +1,4 @@
 import type { User } from "../types"
-import { mockUsers } from "../mock-data"
 import { filterUsersByTenant } from "../multi-tenant-filtering"
 import ApiService from "./api-service"
 
@@ -9,15 +8,8 @@ import ApiService from "./api-service"
  */
 
 export async function getUsers(user: User | null): Promise<User[]> {
-  try {
-    // Try to get users from API first
-    const users = await ApiService.getUsers()
-    return filterUsersByTenant(users, user)
-  } catch (error) {
-    console.log("API failed, falling back to mock data:", error)
-    const users = await mockUsers()
-    return filterUsersByTenant(users, user)
-  }
+  const users = await ApiService.getUsers()
+  return filterUsersByTenant(users, user)
 }
 
 export async function getUserById(userId: string, currentUser: User | null): Promise<User | undefined> {

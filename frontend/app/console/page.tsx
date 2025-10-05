@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useAppStore } from "@/lib/store"
+import { useAppStore } from "@/lib/services/store-service"
 import { PlatformOverview } from "@/components/console/platform-overview"
 import { OrganizationManagement } from "@/components/console/organization-management"
 import { BillingOverview } from "@/components/console/billing-overview"
@@ -10,14 +10,32 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { RefreshCw, Settings, Bell } from "lucide-react"
 import { hasPermission } from "@/lib/permissions"
+import ApiService from "@/lib/services/api-service"
+import { getUsers } from "@/lib/services"
 
 export default function ConsolePage() {
-  const { currentUser, organizations, getDashboardMetrics, getVisibleUsers } = useAppStore()
-  const users = getVisibleUsers()
+  const { currentUser, organizations } = useAppStore()
+  const [users, setUsers] = useState<any[]>([])
+  const [metrics, setMetrics] = useState<any>(null)
   const [refreshKey, setRefreshKey] = useState(0)
   const [activeTab, setActiveTab] = useState("overview")
 
-  const metrics = getDashboardMetrics()
+  useEffect(() => {
+    const load = async () => {
+      if (!currentUser) return
+      try {
+        const [m, u] = await Promise.all([
+          ApiService.getMetrics(),
+          getUsers(currentUser)
+        ])
+        setMetrics(m)
+        setUsers(u)
+      } catch (e) {
+        console.error("Failed to load console data:", e)
+      }
+    }
+    load()
+  }, [currentUser])
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search)

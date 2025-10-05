@@ -1,7 +1,7 @@
 "use client"
 
-import { useState } from "react"
-import { useAppStore } from "@/lib/store"
+import { useEffect, useState } from "react"
+import { useAppStore } from "@/lib/services/store-service"
 import type { User } from "@/lib/types"
 import { StaffList } from "@/components/staff/staff-list"
 import { InviteForm } from "@/components/staff/invite-form"
@@ -9,12 +9,31 @@ import { EditUserForm } from "@/components/staff/edit-user-form"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Lock } from "lucide-react"
+import { getUsers } from "@/lib/services"
 
 export default function StaffPage() {
-  const { getVisibleUsers, locations, currentUser } = useAppStore()
-  const users = getVisibleUsers()
+  const { locations, currentUser } = useAppStore()
+  const [users, setUsers] = useState<User[]>([])
+  const [loading, setLoading] = useState(true)
   const [showInviteForm, setShowInviteForm] = useState(false)
   const [editingUser, setEditingUser] = useState<User | null>(null)
+
+  useEffect(() => {
+    const loadUsers = async () => {
+      if (!currentUser) return
+      try {
+        setLoading(true)
+        const data = await getUsers(currentUser)
+        setUsers(data)
+      } catch (e) {
+        console.error("Failed to load users:", e)
+        setUsers([])
+      } finally {
+        setLoading(false)
+      }
+    }
+    loadUsers()
+  }, [currentUser])
 
   const hasAccess = currentUser?.role === "owner" || currentUser?.role === "admin"
 
@@ -74,6 +93,19 @@ export default function StaffPage() {
   const handleCancel = () => {
     setShowInviteForm(false)
     setEditingUser(null)
+  }
+
+  if (loading) {
+    return (
+      <div className="p-6">
+        <Card className="max-w-md mx-auto mt-20">
+          <CardHeader className="text-center">
+            <CardTitle>Loading staff...</CardTitle>
+            <CardDescription>Please wait</CardDescription>
+          </CardHeader>
+        </Card>
+      </div>
+    )
   }
 
   if (showInviteForm) {

@@ -1,49 +1,50 @@
 import type { Production, User } from "../types"
-import { mockProductions } from "../mock-data"
 import { filterProductionByTenant } from "../multi-tenant-filtering"
+import ApiService from "./api-service"
 
 /**
  * Production Service
  * Handles all production-related data operations with multi-tenant filtering
  */
 
-export function getProduction(user: User | null): Production[] {
-  return filterProductionByTenant(mockProductions, user)
+export async function getProduction(user: User | null): Promise<Production[]> {
+  const production = await ApiService.getProduction()
+  return filterProductionByTenant(production, user)
 }
 
-export function getProductionById(productionId: string, user: User | null): Production | undefined {
-  const productions = getProduction(user)
+export async function getProductionById(productionId: string, user: User | null): Promise<Production | undefined> {
+  const productions = await getProduction(user)
   return productions.find(production => production.id === productionId)
 }
 
-export function getProductionByStatus(status: Production["status"], user: User | null): Production[] {
-  const productions = getProduction(user)
+export async function getProductionByStatus(status: Production["status"], user: User | null): Promise<Production[]> {
+  const productions = await getProduction(user)
   return productions.filter(production => production.status === status)
 }
 
-export function getProductionByCategory(category: string, user: User | null): Production[] {
-  const productions = getProduction(user)
+export async function getProductionByCategory(category: string, user: User | null): Promise<Production[]> {
+  const productions = await getProduction(user)
   return productions.filter(production => production.category === category)
 }
 
-export function getProductionByLocation(locationId: string, user: User | null): Production[] {
-  const productions = getProduction(user)
+export async function getProductionByLocation(locationId: string, user: User | null): Promise<Production[]> {
+  const productions = await getProduction(user)
   return productions.filter(production => production.locationId === locationId)
 }
 
-export function getProductionByDateRange(startDate: Date, endDate: Date, user: User | null): Production[] {
-  const productions = getProduction(user)
+export async function getProductionByDateRange(startDate: Date, endDate: Date, user: User | null): Promise<Production[]> {
+  const productions = await getProduction(user)
   return productions.filter(production => 
     production.productionDate >= startDate && production.productionDate <= endDate
   )
 }
 
-export function getProductionByProducer(producedBy: string, user: User | null): Production[] {
-  const productions = getProduction(user)
+export async function getProductionByProducer(producedBy: string, user: User | null): Promise<Production[]> {
+  const productions = await getProduction(user)
   return productions.filter(production => production.producedBy === producedBy)
 }
 
-export function getTodayProduction(user: User | null): Production[] {
+export async function getTodayProduction(user: User | null): Promise<Production[]> {
   const today = new Date()
   today.setHours(0, 0, 0, 0)
   const tomorrow = new Date(today)
@@ -52,8 +53,8 @@ export function getTodayProduction(user: User | null): Production[] {
   return getProductionByDateRange(today, tomorrow, user)
 }
 
-export function getExpiringProduction(daysUntilExpiry: number, user: User | null): Production[] {
-  const productions = getProduction(user)
+export async function getExpiringProduction(daysUntilExpiry: number, user: User | null): Promise<Production[]> {
+  const productions = await getProduction(user)
   const cutoffDate = new Date()
   cutoffDate.setDate(cutoffDate.getDate() + daysUntilExpiry)
   
@@ -62,8 +63,8 @@ export function getExpiringProduction(daysUntilExpiry: number, user: User | null
   )
 }
 
-export function searchProduction(searchTerm: string, user: User | null): Production[] {
-  const productions = getProduction(user)
+export async function searchProduction(searchTerm: string, user: User | null): Promise<Production[]> {
+  const productions = await getProduction(user)
   const term = searchTerm.toLowerCase()
   
   return productions.filter(production => 
@@ -73,7 +74,7 @@ export function searchProduction(searchTerm: string, user: User | null): Product
   )
 }
 
-export function getTotalProductionValue(user: User | null): number {
-  const productions = getProduction(user)
+export async function getTotalProductionValue(user: User | null): Promise<number> {
+  const productions = await getProduction(user)
   return productions.reduce((total, production) => total + production.totalCost, 0)
 }

@@ -1,5 +1,5 @@
 import type { User } from "../types"
-import { mockUsers } from "../mock-data"
+import ApiService from "./api-service"
 
 /**
  * Login Service
@@ -7,21 +7,21 @@ import { mockUsers } from "../mock-data"
  */
 
 export async function getAllUsers(): Promise<User[]> {
-  return await mockUsers()
+  return await ApiService.getUsers() as User[]
 }
 
 export async function getSuperUser(): Promise<User | undefined> {
-  const users = await mockUsers()
+  const users = await ApiService.getUsers() as User[]
   return users.find(user => user.role === "superuser")
 }
 
 export async function getUsersByOrganization(organizationId: string): Promise<User[]> {
-  const users = await mockUsers()
+  const users = await ApiService.getUsers() as User[]
   return users.filter(user => user.organizationId === organizationId)
 }
 
 export async function getOrganizationUsers(): Promise<User[]> {
-  const users = await mockUsers()
+  const users = await ApiService.getUsers() as User[]
   return users.filter(user => user.organizationId)
 }
 

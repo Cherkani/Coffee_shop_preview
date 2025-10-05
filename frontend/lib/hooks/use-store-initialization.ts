@@ -1,5 +1,5 @@
 import { useEffect } from "react"
-import { useAppStore } from "../store"
+import { useAppStore } from "../services/store-service"
 
 /**
  * Hook to initialize store data on app startup

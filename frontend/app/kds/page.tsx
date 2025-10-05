@@ -1,14 +1,28 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useAppStore } from "@/lib/store"
+import { useAppStore } from "@/lib/services/store-service"
 import { getOrders } from "@/lib/services"
 import { OrderBoard } from "@/components/kds/order-board"
 import { KDSHeader } from "@/components/kds/kds-header"
 
 export default function KDSPage() {
   const { currentUser, currentLocation } = useAppStore()
-  const orders = getOrders(currentUser)
+  const [orders, setOrders] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  useEffect(() => {
+    const load = async () => {
+      if (!currentUser) return
+      try {
+        setLoading(true)
+        const data = await getOrders(currentUser)
+        setOrders(data)
+      } finally {
+        setLoading(false)
+      }
+    }
+    load()
+  }, [currentUser])
   const [refreshKey, setRefreshKey] = useState(0)
 
   // Mock function for demo purposes

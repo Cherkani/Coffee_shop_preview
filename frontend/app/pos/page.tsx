@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useAppStore } from "@/lib/store"
+import { useAppStore } from "@/lib/services/store-service"
 import { getOrders } from "@/lib/services"
 import type { Product, OrderItem, Order } from "@/lib/types"
 import { ProductGrid } from "@/components/pos/product-grid"

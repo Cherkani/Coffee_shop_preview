@@ -1,8 +1,7 @@
 import { create } from "zustand"
-import type { User, Organization, Location, Product, Order, OrganizationNavigationSettings } from "./types"
-import ApiService from "./services/api-service"
-import { getVisibleOrganizations, getVisibleUsers, hasPermission } from "./permissions"
-import { getDefaultNavigationSettings, updateNavigationPermission } from "./navigation-permissions"
+import type { User, Organization, Location, Product, Order, OrganizationNavigationSettings } from "../types"
+import { getVisibleOrganizations, hasPermission } from "../permissions"
+import { getDefaultNavigationSettings, updateNavigationPermission } from "../navigation-permissions"
 import {
   getProducts,
   getOrders,
@@ -16,7 +15,8 @@ import {
   addProduct as addProductService,
   updateProduct as updateProductService,
   deleteProduct as deleteProductService,
-} from "./services"
+} from "./index"
+import ApiService from "./api-service"
 
 interface AppState {
   currentUser: User | null
@@ -26,9 +26,8 @@ interface AppState {
   locations: Location[]
   isAuthenticated: boolean
   navigationSettings: OrganizationNavigationSettings | null
-  selectedLocations: string[] // For owners to filter by multiple locations
+  selectedLocations: string[]
 
-  // Actions
   initializeData: () => Promise<void>
   setCurrentUser: (user: User) => void
   setCurrentOrganization: (org: Organization) => void
@@ -38,21 +37,19 @@ interface AppState {
   signIn: (user: User) => void
   updateNavigationPermission: (permissionId: string, enabled: boolean) => void
   setNavigationSettings: (settings: OrganizationNavigationSettings) => void
-  
-  // Product management actions
+
   addProduct: (product: Omit<Product, "id">) => void
   updateProduct: (productId: string, updates: Partial<Product>) => void
   deleteProduct: (productId: string) => void
 
-  // Data getters
   getDashboardMetrics: () => Promise<any>
   getTransactions: () => Promise<any[]>
   getInventoryItems: () => Promise<any[]>
   getSuppliers: () => Promise<any[]>
   getMarketplaceListings: () => Promise<any[]>
   getVisibleOrganizations: () => Organization[]
-  getVisibleUsers: () => User[]
-  getProducts: () => Product[]
+  getVisibleUsers: () => Promise<User[]>
+  getProducts: () => Promise<Product[]>
   getOrders: () => Promise<Order[]>
   getProduction: () => Promise<any[]>
   hasPermission: (permission: string) => boolean
@@ -75,23 +72,12 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   initializeData: async () => {
     try {
-      console.log("Initializing store data...")
-      // Fetch from API via services proxy
-      const orgs = await (await fetch("/api/organizations")).json()
-      const nav = await (await fetch("/api/navigationSettings")).json()
-      
+      const [orgs, nav] = await Promise.all([
+        fetch("/api/organizations").then((r) => r.json()),
+        fetch("/api/navigationSettings").then((r) => r.json()),
+      ])
       const locations = orgs.flatMap((org: any) => org.locations)
-      
-      set({ 
-        organizations: orgs,
-        locations,
-        navigationSettings: nav[0] || null
-      })
-      
-      console.log("Store data initialized:", { 
-        organizations: orgs.length, 
-        locations: locations.length 
-      })
+      set({ organizations: orgs, locations, navigationSettings: nav[0] || null })
     } catch (error) {
       console.error("Failed to initialize store data:", error)
     }
@@ -111,10 +97,7 @@ export const useAppStore = create<AppState>((set, get) => ({
     const location = user.locationId && org ? org.locations.find((l) => l.id === user.locationId) : null
     const userNavigationSettings = org ? navigationSettings || getDefaultNavigationSettings(org.id) : null
 
-    // Initialize selected locations for owners (all their locations)
-    const initialSelectedLocations = user.role === "owner" && org 
-      ? org.locations.map(loc => loc.id)
-      : []
+    const initialSelectedLocations = user.role === "owner" && org ? org.locations.map((loc) => loc.id) : []
 
     set({
       currentUser: user,
@@ -136,55 +119,20 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   setNavigationSettings: (settings) => set({ navigationSettings: settings }),
 
-  // Product management actions
   addProduct: (productData) => {
     const { currentUser } = get()
-    console.log("Store addProduct called:", productData)
-    console.log("Current user:", currentUser)
-    
-    if (!currentUser) {
-      console.log("No current user, cannot add product")
-      return
-    }
-
-    try {
-      const newProduct = addProductService(productData, currentUser)
-      console.log("Product added:", newProduct)
-    } catch (error) {
-      console.error("Error adding product:", error)
-    }
+    if (!currentUser) return
+    addProductService(productData, currentUser)
   },
-
   updateProduct: (productId, updates) => {
     const { currentUser } = get()
-    
-    if (!currentUser) {
-      console.log("No current user, cannot update product")
-      return
-    }
-
-    try {
-      const updatedProduct = updateProductService(productId, updates, currentUser)
-      console.log("Product updated:", updatedProduct)
-    } catch (error) {
-      console.error("Error updating product:", error)
-    }
+    if (!currentUser) return
+    updateProductService(productId, updates, currentUser)
   },
-
   deleteProduct: (productId) => {
     const { currentUser } = get()
-    
-    if (!currentUser) {
-      console.log("No current user, cannot delete product")
-      return
-    }
-
-    try {
-      const success = deleteProductService(productId, currentUser)
-      console.log("Product deleted:", success)
-    } catch (error) {
-      console.error("Error deleting product:", error)
-    }
+    if (!currentUser) return
+    deleteProductService(productId, currentUser)
   },
 
   getDashboardMetrics: async () => {
@@ -217,21 +165,14 @@ export const useAppStore = create<AppState>((set, get) => ({
     return getVisibleOrganizations(currentUser, organizations)
   },
 
-  getVisibleUsers: () => {
+  getVisibleUsers: async () => {
     const { currentUser } = get()
-    // Note: components should use async services directly now
-    return []
+    return getUsers(currentUser)
   },
 
   getProducts: () => {
     const { currentUser, selectedLocations } = get()
-    console.log("Store getProducts called:")
-    console.log("- Current user:", currentUser)
-    console.log("- Selected locations:", selectedLocations)
-    
-    // For now, return empty array - components should use the async service directly
-    console.log("- Returning empty array (use async service directly)")
-    return []
+    return getProducts(currentUser, selectedLocations)
   },
 
   getOrders: () => {
@@ -249,3 +190,5 @@ export const useAppStore = create<AppState>((set, get) => ({
     return hasPermission(currentUser, permission as any)
   },
 }))
+
+

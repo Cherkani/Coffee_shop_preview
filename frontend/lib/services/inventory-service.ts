@@ -1,5 +1,4 @@
 import type { InventoryItem, User } from "../types"
-import { mockInventoryItems } from "../mock-data"
 import { filterInventoryByTenant } from "../multi-tenant-filtering"
 import ApiService from "./api-service"
 
@@ -9,15 +8,8 @@ import ApiService from "./api-service"
  */
 
 export async function getInventoryItems(user: User | null, selectedLocations?: string[]): Promise<InventoryItem[]> {
-  try {
-    // Try to get inventory from API first
-    const inventory = await ApiService.getInventory()
-    return filterInventoryByTenant(inventory, user, selectedLocations)
-  } catch (error) {
-    console.log("API failed, falling back to mock data:", error)
-    const inventory = await mockInventoryItems()
-    return filterInventoryByTenant(inventory, user, selectedLocations)
-  }
+  const inventory = await ApiService.getInventory()
+  return filterInventoryByTenant(inventory, user, selectedLocations)
 }
 
 export async function getInventoryItemById(itemId: string, user: User | null): Promise<InventoryItem | undefined> {

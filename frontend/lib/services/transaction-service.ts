@@ -1,5 +1,4 @@
 import type { Transaction, User } from "../types"
-import { mockTransactions } from "../mock-data"
 import { filterTransactionsByTenant } from "../multi-tenant-filtering"
 import ApiService from "./api-service"
 
@@ -9,15 +8,8 @@ import ApiService from "./api-service"
  */
 
 export async function getTransactions(user: User | null, selectedLocations?: string[]): Promise<Transaction[]> {
-  try {
-    // Try to get transactions from API first
-    const transactions = await ApiService.getTransactions()
-    return filterTransactionsByTenant(transactions, user, selectedLocations)
-  } catch (error) {
-    console.log("API failed, falling back to mock data:", error)
-    const transactions = await mockTransactions()
-    return filterTransactionsByTenant(transactions, user, selectedLocations)
-  }
+  const transactions = await ApiService.getTransactions()
+  return filterTransactionsByTenant(transactions, user, selectedLocations)
 }
 
 export async function getTransactionById(transactionId: string, user: User | null): Promise<Transaction | undefined> {

@@ -1,11 +1,15 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { useAppStore } from "@/lib/store"
 import { PlatformUsersManagement } from "@/components/console/platform-users-management"
 import { hasPermission } from "@/lib/permissions"
+import { getUsers } from "@/lib/services"
 
 export default function UsersPage() {
-  const { currentUser, organizations, getVisibleUsers } = useAppStore()
+  const { currentUser, organizations } = useAppStore()
+  const [users, setUsers] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
 
   if (!currentUser || !hasPermission(currentUser, "canViewAllUsers")) {
     return (
@@ -16,7 +20,19 @@ export default function UsersPage() {
     )
   }
 
-  const visibleUsers = getVisibleUsers()
+  useEffect(() => {
+    const load = async () => {
+      if (!currentUser) return
+      try {
+        setLoading(true)
+        const data = await getUsers(currentUser)
+        setUsers(data)
+      } finally {
+        setLoading(false)
+      }
+    }
+    load()
+  }, [currentUser])
 
   const handleViewUser = (user: any) => {
     console.log("[v0] View user:", user)
@@ -36,7 +52,7 @@ export default function UsersPage() {
   return (
     <div className="p-6">
       <PlatformUsersManagement
-        users={visibleUsers}
+        users={users}
         organizations={organizations}
         onView={handleViewUser}
         onEdit={handleEditUser}

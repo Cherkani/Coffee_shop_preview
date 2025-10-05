@@ -4,8 +4,9 @@ import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { TrendingUp, TrendingDown, Clock } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { useEffect, useState } from "react"
 import { SALES_METRICS_CONFIG } from "@/lib/constants"
-import { PEAK_HOURS_DATA } from "@/lib/mock-data"
+import ApiService from "@/lib/services/api-service"
 
 interface SalesData {
   totalRevenue: number
@@ -23,6 +24,19 @@ interface SalesOverviewProps {
 }
 
 export function SalesOverview({ data, period }: SalesOverviewProps) {
+  const [peakHours, setPeakHours] = useState<{ timeRange: string; description: string }>({ timeRange: "--", description: "--" })
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const metrics = await ApiService.getMetrics()
+        setPeakHours(metrics?.peakHours || { timeRange: "--", description: "--" })
+      } catch (e) {
+        console.error("Failed to load sales metrics:", e)
+      }
+    }
+    load()
+  }, [])
   const metrics = SALES_METRICS_CONFIG.map((config) => {
     const value = data[config.key as keyof SalesData]
     const change =
@@ -88,8 +102,8 @@ export function SalesOverview({ data, period }: SalesOverviewProps) {
             <TrendingUp className="h-5 w-5 text-green-600" />
             <h3 className="font-semibold">Peak Hours</h3>
           </div>
-          <p className="text-2xl font-bold">{PEAK_HOURS_DATA.timeRange}</p>
-          <p className="text-sm text-muted-foreground">{PEAK_HOURS_DATA.description}</p>
+          <p className="text-2xl font-bold">{peakHours.timeRange}</p>
+          <p className="text-sm text-muted-foreground">{peakHours.description}</p>
         </Card>
       </div>
     </div>

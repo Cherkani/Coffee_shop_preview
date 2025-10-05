@@ -6,7 +6,25 @@ import { Progress } from "@/components/ui/progress"
 import { TrendingUp, TrendingDown, AlertTriangle } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { PLATFORM_METRICS_CONFIG } from "@/lib/constants"
-import { SUBSCRIPTION_PLAN_BREAKDOWN, SYSTEM_HEALTH_METRICS } from "@/lib/mock-data"
+import { useEffect, useState } from "react"
+import ApiService from "@/lib/services/api-service"
+
+export function PlatformOverview({ metrics }: PlatformOverviewProps) {
+  const [systemHealthMetrics, setSystemHealthMetrics] = useState<any[]>([])
+  const [subscriptionBreakdown, setSubscriptionBreakdown] = useState<any[]>([])
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const m = await ApiService.getMetrics()
+        setSystemHealthMetrics(m?.systemHealthMetrics || [])
+        setSubscriptionBreakdown(m?.subscriptionPlanBreakdown || [])
+      } catch (e) {
+        console.error("Failed to load platform metrics:", e)
+      }
+    }
+    load()
+  }, [])
 
 interface PlatformMetrics {
   totalOrganizations: number
@@ -24,7 +42,7 @@ interface PlatformOverviewProps {
   metrics: PlatformMetrics
 }
 
-export function PlatformOverview({ metrics }: PlatformOverviewProps) {
+  
   const overviewCards = PLATFORM_METRICS_CONFIG.map((config) => {
     const value = metrics[config.key as keyof PlatformMetrics]
     const change =
@@ -101,7 +119,7 @@ export function PlatformOverview({ metrics }: PlatformOverviewProps) {
               </div>
               <Progress value={metrics.systemHealth} className="h-2" />
             </div>
-            {SYSTEM_HEALTH_METRICS.map((metric) => (
+            {systemHealthMetrics.map((metric) => (
               <div key={metric.name}>
                 <div className="flex justify-between text-sm mb-1">
                   <span>{metric.name}</span>
@@ -116,7 +134,7 @@ export function PlatformOverview({ metrics }: PlatformOverviewProps) {
         <Card className="p-6">
           <h3 className="text-lg font-semibold mb-4">Active Subscriptions</h3>
           <div className="space-y-4">
-            {SUBSCRIPTION_PLAN_BREAKDOWN.map((plan) => (
+            {subscriptionBreakdown.map((plan) => (
               <div key={plan.plan} className="flex items-center justify-between">
                 <span className="text-sm">{plan.plan}</span>
                 <div className="text-right">

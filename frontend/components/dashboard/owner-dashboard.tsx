@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useAppStore } from "@/lib/store"
+import { useAppStore } from "@/lib/services/store-service"
 import { getProducts, getOrders, getTransactions, getInventoryItems } from "@/lib/services"
 import { LocationSelector } from "@/components/location-selector"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"

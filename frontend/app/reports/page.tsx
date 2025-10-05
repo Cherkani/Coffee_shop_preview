@@ -1,6 +1,7 @@
 "use client"
 
-import { useAppStore } from "@/lib/store"
+import { useEffect, useMemo, useState } from "react"
+import { useAppStore } from "@/lib/services/store-service"
 import { getOrders, getProducts } from "@/lib/services"
 import { SalesOverview } from "@/components/reports/sales-overview"
 import { TopItems } from "@/components/reports/top-items"
@@ -11,12 +12,27 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Calendar, Download, Filter } from "lucide-react"
-import { useMemo } from "react"
 
 export default function ReportsPage() {
   const { currentUser } = useAppStore()
-  const orders = getOrders(currentUser)
-  const products = getProducts(currentUser)
+  const [orders, setOrders] = useState<any[]>([])
+  const [products, setProducts] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const load = async () => {
+      if (!currentUser) return
+      try {
+        setLoading(true)
+        const [o, p] = await Promise.all([getOrders(currentUser), getProducts(currentUser)])
+        setOrders(o)
+        setProducts(p)
+      } finally {
+        setLoading(false)
+      }
+    }
+    load()
+  }, [currentUser])
 
   // Calculate sales data from orders
   const salesData = useMemo(() => {
@@ -41,7 +57,7 @@ export default function ReportsPage() {
   const chartData = [
     { name: "Mon", sales: 240, orders: 45 },
     { name: "Tue", sales: 300, orders: 52 },
-    { name: "Wed", sales: 280, sales: 48 },
+    { name: "Wed", sales: 280, orders: 48 },
     { name: "Thu", sales: 350, orders: 61 },
     { name: "Fri", sales: 420, orders: 73 },
     { name: "Sat", sales: 380, orders: 68 },

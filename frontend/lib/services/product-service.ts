@@ -1,7 +1,5 @@
 import type { Product, User } from "../types"
-import { mockProducts } from "../mock-data"
 import { filterProductsByTenant } from "../multi-tenant-filtering"
-import { getAllProducts, addProductToMockData, updateProductInMockData, deleteProductFromMockData } from "./mock-data-persistence"
 import ApiService from "./api-service"
 
 /**
@@ -10,20 +8,7 @@ import ApiService from "./api-service"
  */
 
 export async function getProducts(user: User | null, selectedLocations?: string[], products?: Product[]): Promise<Product[]> {
-  let sourceProducts: Product[]
-  
-  if (products) {
-    sourceProducts = products
-  } else {
-    try {
-      // Try to get products from API first
-      sourceProducts = await ApiService.getProducts()
-      console.log("Product service - getProducts from API:", sourceProducts.length)
-    } catch (error) {
-      console.log("API failed, falling back to mock data persistence:", error)
-      sourceProducts = getAllProducts()
-    }
-  }
+  const sourceProducts: Product[] = products ?? await ApiService.getProducts()
   
   console.log("Product service - getProducts called:")
   console.log("- User:", user)
@@ -32,7 +17,6 @@ export async function getProducts(user: User | null, selectedLocations?: string[
   
   const filteredProducts = filterProductsByTenant(sourceProducts, user, selectedLocations)
   console.log("- Filtered products count:", filteredProducts.length)
-  console.log("- Filtered products:", filteredProducts)
   
   return filteredProducts
 }
@@ -67,7 +51,7 @@ export async function searchProducts(searchTerm: string, user: User | null): Pro
   )
 }
 
-// Product management functions that write to mock data
+// Product management functions that write to API
 export async function addProduct(productData: Omit<Product, "id">, user: User | null): Promise<Product> {
   if (!user) {
     throw new Error("User must be authenticated to add products")
@@ -80,20 +64,8 @@ export async function addProduct(productData: Omit<Product, "id">, user: User | 
     locationId: user.locationId || "",
   }
 
-  try {
-    // Try to save to API first
-    console.log("Attempting to save product to API:", newProduct)
-    const result = await ApiService.createProduct(newProduct)
-    console.log("Product saved to API successfully:", result)
-  } catch (error) {
-    console.error("Failed to save product to API:", error)
-    console.error("Error details:", error.message)
-    // Fallback to mock data persistence
-    addProductToMockData(newProduct)
-    console.log("Product saved to mock data as fallback:", newProduct)
-  }
-
-  return newProduct
+  const result = await ApiService.createProduct(newProduct)
+  return result
 }
 
 export async function updateProduct(productId: string, updates: Partial<Product>, user: User | null): Promise<Product | null> {
@@ -112,19 +84,8 @@ export async function updateProduct(productId: string, updates: Partial<Product>
   }
 
   const updatedProduct = { ...product, ...updates }
-
-  try {
-    // Try to update in API first
-    await ApiService.updateProduct(productId, updatedProduct)
-    console.log("Product updated in API successfully:", updatedProduct)
-  } catch (error) {
-    console.error("Failed to update product in API:", error)
-    // Fallback to mock data persistence
-    updateProductInMockData(productId, updates)
-    console.log("Product updated in mock data as fallback:", updatedProduct)
-  }
-
-  return updatedProduct
+  const result = await ApiService.updateProduct(productId, updatedProduct)
+  return result
 }
 
 export async function deleteProduct(productId: string, user: User | null): Promise<boolean> {
@@ -142,38 +103,14 @@ export async function deleteProduct(productId: string, user: User | null): Promi
     throw new Error("You don't have permission to delete this product")
   }
 
-  try {
-    // Try to delete from API first
-    await ApiService.deleteProduct(productId)
-    console.log("Product deleted from API successfully:", productId)
-  } catch (error) {
-    console.error("Failed to delete product from API:", error)
-    // Fallback to mock data persistence
-    deleteProductFromMockData(productId)
-    console.log("Product deleted from mock data as fallback:", productId)
-  }
-
+  await ApiService.deleteProduct(productId)
   return true
 }
 
 // API-based product functions
 export async function getProductsFromAPI(user: User | null, selectedLocations?: string[]): Promise<Product[]> {
-  try {
-    console.log("Fetching products from API...")
-    const allProducts = await ApiService.getProducts()
-    console.log("Products from API:", allProducts)
-    
-    const filteredProducts = filterProductsByTenant(allProducts, user, selectedLocations)
-    console.log("Filtered products:", filteredProducts)
-    
-    return filteredProducts
-  } catch (error) {
-    console.error("Error fetching products from API:", error)
-    // Fallback to mock data
-    console.log("Falling back to mock data...")
-    const sourceProducts = getAllProducts()
-    return filterProductsByTenant(sourceProducts, user, selectedLocations)
-  }
+  const allProducts = await ApiService.getProducts()
+  return filterProductsByTenant(allProducts, user, selectedLocations)
 }
 
 export async function addProductToAPI(productData: Omit<Product, "id">, user: User | null): Promise<Product> {
@@ -188,18 +125,8 @@ export async function addProductToAPI(productData: Omit<Product, "id">, user: Us
     locationId: user.locationId || "",
   }
 
-  try {
-    console.log("Adding product to API:", newProduct)
-    const createdProduct = await ApiService.createProduct(newProduct)
-    console.log("Product created in API:", createdProduct)
-    return createdProduct
-  } catch (error) {
-    console.error("Error adding product to API:", error)
-    // Fallback to mock data
-    console.log("Falling back to mock data...")
-    addProductToMockData(newProduct)
-    return newProduct
-  }
+  const createdProduct = await ApiService.createProduct(newProduct)
+  return createdProduct
 }
 
 export async function updateProductInAPI(productId: string, updates: Partial<Product>, user: User | null): Promise<Product | null> {
@@ -217,18 +144,8 @@ export async function updateProductInAPI(productId: string, updates: Partial<Pro
     throw new Error("You don't have permission to update this product")
   }
 
-  try {
-    console.log("Updating product in API:", productId, updates)
-    const updatedProduct = await ApiService.updateProduct(productId, { ...product, ...updates })
-    console.log("Product updated in API:", updatedProduct)
-    return updatedProduct
-  } catch (error) {
-    console.error("Error updating product in API:", error)
-    // Fallback to mock data
-    console.log("Falling back to mock data...")
-    updateProductInMockData(productId, updates)
-    return { ...product, ...updates }
-  }
+  const updatedProduct = await ApiService.updateProduct(productId, { ...product, ...updates })
+  return updatedProduct
 }
 
 export async function deleteProductFromAPI(productId: string, user: User | null): Promise<boolean> {
@@ -246,16 +163,6 @@ export async function deleteProductFromAPI(productId: string, user: User | null)
     throw new Error("You don't have permission to delete this product")
   }
 
-  try {
-    console.log("Deleting product from API:", productId)
-    await ApiService.deleteProduct(productId)
-    console.log("Product deleted from API")
-    return true
-  } catch (error) {
-    console.error("Error deleting product from API:", error)
-    // Fallback to mock data
-    console.log("Falling back to mock data...")
-    deleteProductFromMockData(productId)
-    return true
-  }
+  await ApiService.deleteProduct(productId)
+  return true
 }

@@ -1,12 +1,15 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import { TrendingUp, Download, CreditCard } from "lucide-react"
 import { BILLING_METRICS_CONFIG, PAYMENT_ISSUE_TYPES } from "@/lib/constants"
-import { SAMPLE_BILLING_TRANSACTIONS, TRIAL_CONVERSION_METRICS } from "@/lib/mock-data"
+import ApiService from "@/lib/services/api-service"
+
+const initialTrialMetrics = { activeTrials: 0, convertedThisMonth: 0 }
 
 interface BillingData {
   totalMRR: number
@@ -23,7 +26,22 @@ interface BillingOverviewProps {
 }
 
 export function BillingOverview({ data }: BillingOverviewProps) {
-  const recentTransactions = SAMPLE_BILLING_TRANSACTIONS
+  const [recentTransactions, setRecentTransactions] = useState<any[]>([])
+  const [trialMetrics, setTrialMetrics] = useState(initialTrialMetrics)
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const billing = await ApiService.getBilling()
+        setRecentTransactions(billing)
+        const metrics = await ApiService.getMetrics()
+        setTrialMetrics(metrics?.trial || initialTrialMetrics)
+      } catch (e) {
+        console.error("Failed to load billing data:", e)
+      }
+    }
+    load()
+  }, [])
 
   const overduePaymentIssue = PAYMENT_ISSUE_TYPES[0]
   const failedPaymentIssue = PAYMENT_ISSUE_TYPES[1]
@@ -91,11 +109,11 @@ export function BillingOverview({ data }: BillingOverviewProps) {
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
                 <p className="text-muted-foreground">Active Trials</p>
-                <p className="font-semibold">{TRIAL_CONVERSION_METRICS.activeTrials}</p>
+                <p className="font-semibold">{trialMetrics.activeTrials}</p>
               </div>
               <div>
                 <p className="text-muted-foreground">Converted This Month</p>
-                <p className="font-semibold">{TRIAL_CONVERSION_METRICS.convertedThisMonth}</p>
+                <p className="font-semibold">{trialMetrics.convertedThisMonth}</p>
               </div>
             </div>
           </div>

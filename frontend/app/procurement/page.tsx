@@ -1,7 +1,7 @@
 "use client"
 
-import { useState } from "react"
-import { useAppStore } from "@/lib/store"
+import { useEffect, useState } from "react"
+import { useAppStore } from "@/lib/services/store-service"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -10,67 +10,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Plus, Search, DollarSign, Truck, Package } from "lucide-react"
 import type { PurchaseOrder } from "@/lib/types"
 
-// Mock purchase orders data
-const mockPurchaseOrders: PurchaseOrder[] = [
-  {
-    id: "1",
-    orderNumber: "PO-2024-001",
-    supplierId: "1",
-    supplierName: "Premium Coffee Co.",
-    buyerLocationId: "loc1",
-    items: [
-      { id: "1", itemName: "Colombian Coffee Beans", quantity: 50, unitPrice: 12.5, totalPrice: 625.0, unit: "lbs" },
-      { id: "2", itemName: "Brazilian Coffee Beans", quantity: 30, unitPrice: 11.0, totalPrice: 330.0, unit: "lbs" },
-    ],
-    totalAmount: 955.0,
-    status: "confirmed",
-    orderDate: new Date("2024-01-20"),
-    expectedDelivery: new Date("2024-01-23"),
-    notes: "Rush order for weekend promotion",
-  },
-  {
-    id: "2",
-    orderNumber: "PO-2024-002",
-    marketplaceItemId: "1",
-    supplierName: "Downtown Roastery (Internal)",
-    buyerLocationId: "loc1",
-    items: [
-      {
-        id: "3",
-        itemName: "Premium Colombian Coffee Beans",
-        quantity: 20,
-        unitPrice: 15.5,
-        totalPrice: 310.0,
-        unit: "lbs",
-      },
-    ],
-    totalAmount: 310.0,
-    status: "shipped",
-    orderDate: new Date("2024-01-21"),
-    expectedDelivery: new Date("2024-01-22"),
-    actualDelivery: new Date("2024-01-22"),
-    notes: "Internal marketplace purchase",
-  },
-  {
-    id: "3",
-    orderNumber: "PO-2024-003",
-    supplierId: "2",
-    supplierName: "Dairy Fresh Supply",
-    buyerLocationId: "loc1",
-    items: [
-      { id: "4", itemName: "Oat Milk", quantity: 24, unitPrice: 3.25, totalPrice: 78.0, unit: "cartons" },
-      { id: "5", itemName: "Almond Milk", quantity: 12, unitPrice: 3.5, totalPrice: 42.0, unit: "cartons" },
-    ],
-    totalAmount: 120.0,
-    status: "draft",
-    orderDate: new Date("2024-01-22"),
-    expectedDelivery: new Date("2024-01-24"),
-  },
-]
+// For now, procurement pulls from API in future; using empty list
+const initialPurchaseOrders: PurchaseOrder[] = []
 
 export default function ProcurementPage() {
   const { currentUser } = useAppStore()
-  const [orders, setOrders] = useState<PurchaseOrder[]>(mockPurchaseOrders)
+  const [orders, setOrders] = useState<PurchaseOrder[]>(initialPurchaseOrders)
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
 

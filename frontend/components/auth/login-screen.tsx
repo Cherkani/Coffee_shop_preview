@@ -1,13 +1,29 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useAppStore } from "@/lib/store"
+import { useAppStore } from "@/lib/services/store-service"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { User as UserIcon, Building2, MapPin, Users, Crown, Settings, ShoppingCart } from "lucide-react"
-import { organizationNames, locationNames, roleColors, roleDescriptions } from "@/lib/mock-data"
+// Using inline constants; can be sourced from constants endpoint if desired
+const roleColors = {
+  superuser: "bg-purple-500",
+  owner: "bg-blue-500",
+  admin: "bg-green-500",
+  cashier: "bg-orange-500",
+} as const
+
+const roleDescriptions = {
+  superuser: "Platform-level access to all organizations, billing, and global metrics",
+  owner: "Organization-wide control with multi-location management and full reporting",
+  admin: "Location-level management with inventory control and staff supervision",
+  cashier: "POS interface with lite reporting and kitchen display operations",
+} as const
+
+const organizationNames: Record<string, string> = {}
+const locationNames: Record<string, string> = {}
 import { getAllUsers, getSuperUser, getUsersGroupedByOrganization } from "@/lib/services"
 import type { User, UserRole } from "@/lib/types"
 
@@ -117,7 +133,7 @@ export function LoginScreen() {
                 <div className="p-2 rounded-lg bg-blue-100">
                   <Building2 className="h-6 w-6 text-blue-600" />
                 </div>
-                <h2 className="text-2xl font-semibold">{organizationNames[orgId as keyof typeof organizationNames]}</h2>
+                <h2 className="text-2xl font-semibold">Organization {orgId}</h2>
                 <Badge variant="outline" className="ml-auto">
                   {orgUsers.length} users
                 </Badge>
@@ -155,7 +171,7 @@ export function LoginScreen() {
                           {user.locationId && (
                             <div className="flex items-center gap-2 text-sm">
                               <MapPin className="h-4 w-4 text-muted-foreground" />
-                              <span>{locationNames[user.locationId as keyof typeof locationNames]}</span>
+                              <span>{user.locationId}</span>
                             </div>
                           )}
                         </div>

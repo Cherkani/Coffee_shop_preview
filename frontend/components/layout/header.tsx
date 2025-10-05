@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useAppStore } from "@/lib/store"
+import { useAppStore } from "@/lib/services/store-service"
 import { getAllUsers } from "@/lib/services"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"

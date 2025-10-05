@@ -3,7 +3,8 @@
  * Handles all HTTP requests to the JSON server
  */
 
-const API_BASE_URL = 'http://localhost:3001'
+// Use Next.js rewrite proxy so the browser only talks to port 4000
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:4000/api'
 
 export class ApiService {
   private static async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
