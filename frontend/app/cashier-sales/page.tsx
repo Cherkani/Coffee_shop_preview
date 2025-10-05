@@ -1,7 +1,7 @@
 "use client"
 
-import { useState } from "react"
-import { useAppStore } from "@/lib/store"
+import { useEffect, useState } from "react"
+import { useAppStore } from "@/lib/services/store-service"
 import { getAllCashierSales, getSalesMetrics, type CashierSalesData } from "@/lib/services"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -27,6 +27,15 @@ export default function CashierSalesPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedPeriod, setSelectedPeriod] = useState("today")
   const [selectedCashier, setSelectedCashier] = useState<string>("all")
+  const [cashierSales, setCashierSales] = useState<CashierSalesData[]>([])
+  const [salesMetrics, setSalesMetrics] = useState<any>({
+    totalRevenue: 0,
+    totalTransactions: 0,
+    averageTransactionValue: 0,
+    topCashier: null,
+    cashierPerformance: []
+  })
+  const [loading, setLoading] = useState(true)
 
   if (!currentUser || currentUser.role !== "owner") {
     return (
@@ -37,8 +46,23 @@ export default function CashierSalesPage() {
     )
   }
 
-  const cashierSales = getAllCashierSales(currentUser)
-  const salesMetrics = getSalesMetrics(currentUser)
+  useEffect(() => {
+    const load = async () => {
+      if (!currentUser) return
+      try {
+        setLoading(true)
+        const [sales, metrics] = await Promise.all([
+          getAllCashierSales(currentUser),
+          getSalesMetrics(currentUser)
+        ])
+        setCashierSales(sales)
+        setSalesMetrics(metrics)
+      } finally {
+        setLoading(false)
+      }
+    }
+    load()
+  }, [currentUser])
 
   // Filter cashiers based on search term
   const filteredCashiers = cashierSales.filter(cashier =>
@@ -68,6 +92,9 @@ export default function CashierSalesPage() {
       </div>
 
       {/* Sales Overview Cards */}
+      {loading ? (
+        <div className="text-muted-foreground">Loading sales data...</div>
+      ) : (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -117,6 +144,7 @@ export default function CashierSalesPage() {
           </CardContent>
         </Card>
       </div>
+      )}
 
       {/* Filters */}
       <div className="flex gap-4 items-center">

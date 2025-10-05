@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { useAppStore } from "@/lib/services/store-service"
 import { getOrders } from "@/lib/services"
+import ApiService from "@/lib/services/api-service"
 import type { Product, OrderItem, Order } from "@/lib/types"
 import { ProductGrid } from "@/components/pos/product-grid"
 import { ModifierDrawer } from "@/components/pos/modifier-drawer"
@@ -77,7 +78,7 @@ export default function POSPage() {
     setCartItems((prev) => prev.filter((item) => item.id !== itemId))
   }
 
-  const handleCheckout = (customerName?: string, discount?: number) => {
+  const handleCheckout = async (customerName?: string, discount?: number) => {
     if (cartItems.length === 0) return
 
     const subtotal = cartItems.reduce((sum, item) => sum + item.price, 0)
@@ -96,9 +97,21 @@ export default function POSPage() {
       organizationId: currentUser?.organizationId || "",
     }
 
-    // For demo purposes, we'll just log the order
-    console.log("New order created:", newOrder)
-    setCartItems([])
+    try {
+      // Persist to server
+      await ApiService.createOrder({
+        ...newOrder,
+        // Ensure dates are sent as ISO strings for json-server
+        createdAt: newOrder.createdAt.toISOString(),
+      })
+
+      // Optimistically update local state so it appears immediately
+      setOrders((prev) => [newOrder, ...prev])
+    } catch (e) {
+      console.error("Failed to create order:", e)
+    } finally {
+      setCartItems([])
+    }
   }
 
   // Filter orders for current location

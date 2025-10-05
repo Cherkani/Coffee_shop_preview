@@ -29,11 +29,11 @@ export interface SalesMetrics {
   cashierPerformance: CashierSalesData[]
 }
 
-export function getCashierSalesData(cashierId: string, user: User | null): CashierSalesData | null {
+export async function getCashierSalesData(cashierId: string, user: User | null): Promise<CashierSalesData | null> {
   if (!user) return null
 
-  const transactions = getTransactions(user)
-  const orders = getOrders(user)
+  const transactions = await getTransactions(user)
+  const orders = await getOrders(user)
   
   // Filter transactions by cashier
   const cashierTransactions = transactions.filter(t => t.cashierId === cashierId)
@@ -107,19 +107,18 @@ export function getCashierSalesData(cashierId: string, user: User | null): Cashi
   }
 }
 
-export function getAllCashierSales(user: User | null): CashierSalesData[] {
+export async function getAllCashierSales(user: User | null): Promise<CashierSalesData[]> {
   if (!user || user.role !== "owner") return []
 
-  // Get all cashiers in the organization
-  const cashierIds = ["cashier-1", "cashier-2", "cashier-3", "cashier-4"] // This should come from user service
-  
-  return cashierIds
-    .map(cashierId => getCashierSalesData(cashierId, user))
+  // Get all cashiers in the organization (TODO: fetch from user service)
+  const cashierIds = ["cashier-1", "cashier-2", "cashier-3", "cashier-4"]
+  const results = await Promise.all(cashierIds.map(id => getCashierSalesData(id, user)))
+  return results
     .filter((data): data is CashierSalesData => data !== null)
-    .sort((a, b) => b.totalSales - a.totalSales) // Sort by total sales descending
+    .sort((a, b) => b.totalSales - a.totalSales)
 }
 
-export function getSalesMetrics(user: User | null): SalesMetrics {
+export async function getSalesMetrics(user: User | null): Promise<SalesMetrics> {
   if (!user || user.role !== "owner") {
     return {
       totalRevenue: 0,
@@ -130,7 +129,7 @@ export function getSalesMetrics(user: User | null): SalesMetrics {
     }
   }
 
-  const cashierSales = getAllCashierSales(user)
+  const cashierSales = await getAllCashierSales(user)
   const totalRevenue = cashierSales.reduce((sum, cashier) => sum + cashier.totalSales, 0)
   const totalTransactions = cashierSales.reduce((sum, cashier) => sum + cashier.totalTransactions, 0)
   const averageTransactionValue = totalTransactions > 0 ? totalRevenue / totalTransactions : 0
@@ -145,15 +144,15 @@ export function getSalesMetrics(user: User | null): SalesMetrics {
   }
 }
 
-export function getCashierSalesByDateRange(
+export async function getCashierSalesByDateRange(
   cashierId: string, 
   startDate: Date, 
   endDate: Date, 
   user: User | null
-): CashierSalesData | null {
+): Promise<CashierSalesData | null> {
   if (!user) return null
 
-  const transactions = getTransactions(user)
+  const transactions = await getTransactions(user)
   const cashierTransactions = transactions.filter(t => 
     t.cashierId === cashierId &&
     new Date(t.createdAt) >= startDate &&

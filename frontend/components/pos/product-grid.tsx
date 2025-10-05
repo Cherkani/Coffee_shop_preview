@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useAppStore } from "@/lib/store"
+import { useAppStore } from "@/lib/services/store-service"
 import { getProducts } from "@/lib/services"
 import type { Product } from "@/lib/types"
 import { Card } from "@/components/ui/card"

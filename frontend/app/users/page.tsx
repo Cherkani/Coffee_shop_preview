@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useAppStore } from "@/lib/store"
+import { useAppStore } from "@/lib/services/store-service"
 import { PlatformUsersManagement } from "@/components/console/platform-users-management"
 import { hasPermission } from "@/lib/permissions"
 import { getUsers } from "@/lib/services"

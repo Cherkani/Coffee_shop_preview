@@ -1,6 +1,6 @@
 "use client"
 
-import { useAppStore } from "@/lib/store"
+import { useAppStore } from "@/lib/services/store-service"
 import { cn } from "@/lib/utils"
 import { getNavigationItemsForRole } from "@/lib/navigation-permissions"
 import {

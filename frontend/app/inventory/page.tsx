@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useAppStore } from "@/lib/store"
+import { useAppStore } from "@/lib/services/store-service"
 import { getInventoryItems } from "@/lib/services"
 import type { InventoryItem } from "@/lib/types"
 import { InventoryList } from "@/components/inventory/inventory-list"

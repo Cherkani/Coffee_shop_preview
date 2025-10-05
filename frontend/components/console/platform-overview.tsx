@@ -9,6 +9,10 @@ import { PLATFORM_METRICS_CONFIG } from "@/lib/constants"
 import { useEffect, useState } from "react"
 import ApiService from "@/lib/services/api-service"
 
+interface PlatformOverviewProps {
+  metrics: any
+}
+
 export function PlatformOverview({ metrics }: PlatformOverviewProps) {
   const [systemHealthMetrics, setSystemHealthMetrics] = useState<any[]>([])
   const [subscriptionBreakdown, setSubscriptionBreakdown] = useState<any[]>([])
@@ -38,23 +42,32 @@ interface PlatformMetrics {
   pendingIssues: number
 }
 
-interface PlatformOverviewProps {
-  metrics: PlatformMetrics
-}
+  // Guard against null/undefined metrics while API loads
+  const m: PlatformMetrics = (metrics as PlatformMetrics) || {
+    totalOrganizations: 0,
+    totalLocations: 0,
+    totalUsers: 0,
+    monthlyRevenue: 0,
+    activeSubscriptions: 0,
+    revenueGrowth: 0,
+    userGrowth: 0,
+    systemHealth: 100,
+    pendingIssues: 0,
+  }
 
-  
   const overviewCards = PLATFORM_METRICS_CONFIG.map((config) => {
-    const value = metrics[config.key as keyof PlatformMetrics]
+    const value = m[config.key as keyof PlatformMetrics]
     const change =
       config.key === "totalOrganizations" || config.key === "totalUsers"
-        ? metrics.userGrowth
+        ? m.userGrowth
         : config.key === "monthlyRevenue"
-          ? metrics.revenueGrowth
+          ? m.revenueGrowth
           : 0
 
+    const formatted = config.key === "monthlyRevenue" ? `$${value.toLocaleString()}` : value.toString()
     return {
       title: config.title,
-      value: config.format === "currency" ? `$${value.toLocaleString()}` : value.toString(),
+      value: formatted,
       change,
       icon: config.icon,
       color: config.color,
@@ -66,13 +79,13 @@ interface PlatformOverviewProps {
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-semibold">Platform Overview</h2>
         <div className="flex items-center gap-2">
-          <Badge variant={metrics.systemHealth > 95 ? "default" : "destructive"}>
-            System Health: {metrics.systemHealth}%
+          <Badge variant={m.systemHealth > 95 ? "default" : "destructive"}>
+            System Health: {m.systemHealth}%
           </Badge>
-          {metrics.pendingIssues > 0 && (
+          {m.pendingIssues > 0 && (
             <Badge variant="destructive">
               <AlertTriangle className="h-3 w-3 mr-1" />
-              {metrics.pendingIssues} Issues
+              {m.pendingIssues} Issues
             </Badge>
           )}
         </div>
@@ -146,7 +159,7 @@ interface PlatformOverviewProps {
             <div className="pt-2 border-t">
               <div className="flex items-center justify-between font-semibold">
                 <span>Total Active</span>
-                <span>{metrics.activeSubscriptions}</span>
+                <span>{m.activeSubscriptions}</span>
               </div>
             </div>
           </div>

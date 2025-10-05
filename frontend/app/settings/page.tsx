@@ -1,7 +1,7 @@
 "use client"
 
 import { SettingsPage } from "@/components/settings/settings-page"
-import { useAppStore } from "@/lib/store"
+import { useAppStore } from "@/lib/services/store-service"
 
 export default function Settings() {
   const { currentUser } = useAppStore()
